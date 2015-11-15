@@ -23,44 +23,44 @@ import org.toilelibre.libe.bank.model.account.history.AccountHistoryService;
 import org.toilelibre.libe.bank.model.account.operation.AccountOperationService;
 
 interface AppConfig {
-
+    
     CacheManager cacheManager ();
-
+    
     AccountBalance getAccountBalance ();
-
+    
     AccountBalanceRepository getAccountBalanceRepository ();
-
+    
     AccountBalanceRule getAccountBalanceRule ();
-
+    
     AccountBalanceService getAccountBalanceService ();
-
+    
     AccountDetails.Builder getAccountDetailsBuilder ();
-
+    
     AccountDetailsRepository getAccountDetailsRepository ();
-
+    
     AccountDetailsRule getAccountDetailsRule ();
-
+    
     AccountDetailsService getAccountDetailsService ();
-
+    
     AccountHistory getAccountHistory ();
-
+    
     AccountHistoryOperation getAccountHistoryOperation ();
-
+    
     AccountHistoryOperationRule getAccountHistoryOperationRule ();
-
+    
     AccountHistoryRepository getAccountHistoryRepository ();
-
+    
     AccountHistoryService getAccountHistoryService ();
-
+    
     AccountOperationService getAccountOperationService ();
-
+    
     AccountRepository getAccountRepository ();
-
+    
     AccountRule getAccountRule ();
-
+    
     FindAccountService getFindAccountService ();
-
+    
     RemoveAccountService getRemoveAccountService ();
-
+    
     CreateAccountService getUpdateOrCreateAccountService ();
 }

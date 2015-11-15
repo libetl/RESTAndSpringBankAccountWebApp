@@ -24,47 +24,40 @@ import org.toilelibre.libe.bank.model.account.CreateAccountService;
 
 @RestController
 public class AccountResource {
-
-    private static Logger                LOGGER = LoggerFactory.getLogger (AccountResource.class);
-
+    
+    private static Logger        LOGGER = LoggerFactory.getLogger (AccountResource.class);
+                                        
     @Inject
-    private FindAccountService           findAccountService;
-
+    private FindAccountService   findAccountService;
+                                 
     @Inject
     private CreateAccountService updateOrCreateAccountService;
-
+                                 
     @Inject
-    private AccountRule                  accountRule;
-
+    private AccountRule          accountRule;
+                                 
     @Inject
-    private LinkHelper                   linkHelper;
-
+    private LinkHelper           linkHelper;
+                                 
     @RequestMapping (method = RequestMethod.GET, path = "/account")
     public Response<Set<JsonNode>> list () {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
         AccountResource.LOGGER.info ("Fetching all existing accounts");
         final Set<JsonNode> results = new HashSet<JsonNode> ();
         for (final String iban : this.findAccountService.findAll ()) {
-            results.add (this.linkHelper.addLink ("AccountGetOneAccount", factory.objectNode ().put ("iban", iban)));
+            results.add (this.linkHelper.surroundWithLinks (factory.objectNode ().put ("iban", iban)));
         }
-
+        
         return new Response<Set<JsonNode>> (this.linkHelper.get (), results);
     }
-
+    
     @RequestMapping (method = RequestMethod.GET, path = "/account/{iban}")
     public Response<JsonNode> getOneAccount (@PathVariable final String iban) throws NoSuchAccountException {
         AccountResource.LOGGER.info ("Trying to find account number " + iban);
         final JsonNodeFactory factory = JsonNodeFactory.instance;
-        return new Response<JsonNode> (this.linkHelper.get (), this.linkHelper.addLink (
-                "AccountHistoryGetHistory",
-                this.linkHelper.addLink (
-                        "AccountBalanceGetBalance",
-                        this.linkHelper.addLink (
-                                "AccountDetailsGetDetails",
-                                this.linkHelper.addLink ("AccountOperationDeposit",
-                                        this.linkHelper.addLink ("AccountOperationWithdraw", this.linkHelper.addLink ("AccountOperationTransfer", this.linkHelper.addLink ("AccountBalanceSetOverdraft", factory.objectNode ().put ("iban", this.findAccountService.find (iban))))))))));
+        return new Response<JsonNode> (this.linkHelper.get (), this.linkHelper.surroundWithLinks (factory.objectNode ().put ("iban", this.findAccountService.find (iban))));
     }
-
+    
     @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}")
     public Response<String> create (@PathVariable final String iban) throws BankAccountException {
         this.updateOrCreateAccountService.create (iban, this.accountRule);

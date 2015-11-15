@@ -51,125 +51,125 @@ import org.toilelibre.libe.bank.model.account.operation.AccountOperationService;
 @Configuration
 @EnableCaching
 public class InMemoryAccountsAppConfig implements AppConfig {
-
+    
     @Override
     @Bean
     public CacheManager cacheManager () {
         return new ConcurrentMapCacheManager ("account", "accountBalance", "accountDetails", "accountHistory");
     }
-
+    
     @Override
     @Bean
     public AccountBalance getAccountBalance () {
         return new CustomerAccountBalance ();
     }
-
+    
     @Override
     @Bean
     public AccountBalanceRepository getAccountBalanceRepository () {
         return new BasicHashMapAccountBalanceRepository ();
     }
-
+    
     @Override
     @Bean
     public AccountBalanceRule getAccountBalanceRule () {
         return new CustomerAccountBalanceRule ();
     }
-
+    
     @Override
     @Bean
     public AccountBalanceService getAccountBalanceService () {
         return new CustomerAccountBalanceService ();
     }
-
+    
     @Override
     @Bean
     public Builder getAccountDetailsBuilder () {
         return new CustomerAccountDetails.Builder ();
     }
-
+    
     @Override
     @Bean
     public AccountDetailsRepository getAccountDetailsRepository () {
         return new BasicHashMapAccountDetailsRepository ();
     }
-
+    
     @Override
     @Bean
     public AccountDetailsRule getAccountDetailsRule () {
         return new CustomerAccountDetailsRule ();
     }
-
+    
     @Override
     @Bean
     public AccountDetailsService getAccountDetailsService () {
         return new CustomerAccountDetailsService ();
     }
-
+    
     @Override
     @Bean
     public AccountHistory getAccountHistory () {
         return new BankAccountHistory ();
     }
-
+    
     @Override
     @Bean
     public AccountHistoryOperation getAccountHistoryOperation () {
         return new BankAccountHistoryOperation (new Date (), Type.CREDIT, "", 0.0);
     }
-
+    
     @Override
     @Bean
     public AccountHistoryOperationRule getAccountHistoryOperationRule () {
         return new ValidateAccountRepositoryOperationRule ();
     }
-
+    
     @Override
     @Bean
     public AccountHistoryRepository getAccountHistoryRepository () {
         return new BasicHashMapAccountHistoryRepository ();
     }
-
+    
     @Override
     @Bean
     public AccountHistoryService getAccountHistoryService () {
         return new AccountHistoryInMemoryService ();
     }
-
+    
     @Override
     @Bean
     public AccountOperationService getAccountOperationService () {
         return new SimpleAccountOperationService ();
     }
-
+    
     @Override
     @Bean
     public AccountRepository getAccountRepository () {
         return new BasicHashSetAccountRepository ();
     }
-
+    
     @Override
     @Bean
     public AccountRule getAccountRule () {
         return new CustomerAccountRule ();
     }
-
+    
     @Override
     @Bean
     public FindAccountService getFindAccountService () {
         return new FindAccountInMemoryService ();
     }
-
+    
     @Override
     @Bean
     public RemoveAccountService getRemoveAccountService () {
         return new RemoveAccountInMemoryService ();
     }
-
+    
     @Override
     @Bean
     public CreateAccountService getUpdateOrCreateAccountService () {
         return new CreateAccountInMemoryService ();
     }
-
+    
 }

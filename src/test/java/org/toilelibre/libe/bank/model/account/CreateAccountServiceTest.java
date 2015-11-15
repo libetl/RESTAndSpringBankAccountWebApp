@@ -23,45 +23,45 @@ import org.toilelibre.libe.bank.testutils.TestConfig;
 
 @ContextConfiguration (loader = AnnotationConfigContextLoader.class, classes = { InMemoryAccountsAppConfig.class, TestConfig.class })
 public class CreateAccountServiceTest {
-
+    
     @ClassRule
     public static final LogbackConfigRule LOGBACK_CONFIG_RULE = new LogbackConfigRule ();
-
+                                                              
     @ClassRule
     public static final SpringClassRule   SPRING_CLASS_RULE   = new SpringClassRule ();
-
+                                                              
     @Rule
     public final SpringMethodRule         springMethodRule    = new SpringMethodRule ();
-
+                                                              
     @Rule
     public SmartLogRule                   smartLogRule        = new SmartLogRule ();
-
+                                                              
     @Inject
     private AccountRule                   accountRule;
-    
+                                          
     @Inject
     private CreateAccountService          createAccountService;
-    
+                                          
     @Inject
     private RemoveAccountService          removeAccountService;
-    
+                                          
     @Inject
     private AccountHelper                 accountHelper;
-
+                                          
     @Before
     public void clearData () {
         this.removeAccountService.removeAll ();
     }
-
+    
     @Test (expected = BankAccountException.class)
     public void createExistingIbanShouldThrowAccountAlreadyExistsException () throws BankAccountException {
         // given an account
         String iban = this.accountHelper.getEmptyAccount ();
         this.createAccountService.create (iban, this.accountRule);
-
+        
         // when
         this.createAccountService.create (iban, this.accountRule);
-
+        
         // then should fail
     }
 }

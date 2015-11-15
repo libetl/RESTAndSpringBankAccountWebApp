@@ -12,23 +12,23 @@ import org.toilelibre.libe.bank.model.account.history.AccountHistoryOperation;
  *
  */
 public class BankAccountHistory implements AccountHistory {
-
+    
     private final List<AccountHistoryOperation> historyLines;
-
+    
     public BankAccountHistory () {
         this.historyLines = new LinkedList<AccountHistoryOperation> ();
     }
-
+    
     @Override
     public List<AccountHistoryOperation> getHistoryLines () {
         return Collections.unmodifiableList (this.historyLines);
     }
-
+    
     @Override
     public void addHistoryLine (final AccountHistoryOperation operation) {
         this.historyLines.add (operation);
     }
-
+    
     /**
      * As the Account History is an Entity (and not a VO) It must be cloned if
      * persisted in memory

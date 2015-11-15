@@ -15,26 +15,28 @@ import org.toilelibre.libe.bank.model.account.history.IllegalAccountHistoryOpera
 import org.toilelibre.libe.bank.model.account.operation.AccountOperationService;
 
 public class SimpleAccountOperationService implements AccountOperationService {
-
+    
     private static Logger           LOGGER = LoggerFactory.getLogger (SimpleAccountOperationService.class);
-
+                                           
     @Inject
     private AccountHistoryService   accountHistoryService;
-
+                                    
     @Inject
     private AccountBalanceService   accountBalanceService;
-
+                                    
     @Inject
     private AccountHistoryOperation accountHistoryOperation;
-
+                                    
     @Override
-    public AccountHistoryOperation deposit (final String iban, final double amount, final AccountBalanceRule balanceRule, final AccountHistoryOperationRule historyRule) throws BankAccountException {
+    public AccountHistoryOperation deposit (final String iban, final double amount, final AccountBalanceRule balanceRule, final AccountHistoryOperationRule historyRule)
+            throws BankAccountException {
         this.accountBalanceService.add (iban, amount, balanceRule);
         return this.accountHistoryService.addToHistory (iban, this.accountHistoryOperation.newCredit ("Bank Deposit", amount), historyRule);
     }
-
+    
     @Override
-    public AccountHistoryOperation withdraw (final String iban, final double amount, final AccountBalanceRule balanceRule, final AccountHistoryOperationRule historyRule) throws BankAccountException {
+    public AccountHistoryOperation withdraw (final String iban, final double amount, final AccountBalanceRule balanceRule, final AccountHistoryOperationRule historyRule)
+            throws BankAccountException {
         this.accountBalanceService.substract (iban, amount, balanceRule);
         try {
             return this.accountHistoryService.addToHistory (iban, this.accountHistoryOperation.newDebit ("Bank Withdrawal", amount), historyRule);
@@ -44,9 +46,10 @@ public class SimpleAccountOperationService implements AccountOperationService {
             throw operation;
         }
     }
-
+    
     @Override
-    public AccountHistoryOperation transfer (final String iban, final double amount, final String recipient, final AccountBalanceRule balanceRule, final AccountHistoryOperationRule historyRule) throws BankAccountException {
+    public AccountHistoryOperation transfer (final String iban, final double amount, final String recipient, final AccountBalanceRule balanceRule,
+            final AccountHistoryOperationRule historyRule) throws BankAccountException {
         this.accountBalanceService.substract (iban, amount, balanceRule);
         try {
             return this.accountHistoryService.addToHistory (iban, this.accountHistoryOperation.newDebit (recipient, amount), historyRule);
@@ -56,5 +59,5 @@ public class SimpleAccountOperationService implements AccountOperationService {
             throw operation;
         }
     }
-
+    
 }

@@ -4,7 +4,7 @@ package org.toilelibre.libe.bank.model.account.balance;
  * Checks if the requested operation is permitted.
  */
 public interface AccountBalanceRule {
-
+    
     /**
      * Checks if the resulting account balance after a withdrawal is OK for the
      * specific type of account.
@@ -16,7 +16,7 @@ public interface AccountBalanceRule {
      * @return true if the operation is permitted, false otherwise
      */
     boolean withdrawPermitted (Double resultingAccountBalance, Double allowedOverdraft);
-
+    
     /**
      * Checks if the amount passed in parameter can be added to the balance
      *
@@ -25,7 +25,7 @@ public interface AccountBalanceRule {
      * @return true if the operation is permitted, false otherwise
      */
     boolean canAddThisAmount (Double addedAmount);
-
+    
     /**
      * Checks if the overdraft passed in parameter can be set
      *

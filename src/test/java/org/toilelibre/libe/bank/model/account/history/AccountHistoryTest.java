@@ -21,40 +21,40 @@ import org.toilelibre.libe.bank.testutils.TestConfig;
 
 @ContextConfiguration (loader = AnnotationConfigContextLoader.class, classes = { InMemoryAccountsAppConfig.class, TestConfig.class })
 public class AccountHistoryTest {
-
+    
     @ClassRule
     public static final LogbackConfigRule LOGBACK_CONFIG_RULE = new LogbackConfigRule ();
-
+                                                              
     @ClassRule
     public static final SpringClassRule   SPRING_CLASS_RULE   = new SpringClassRule ();
-
+                                                              
     @Rule
     public final SpringMethodRule         springMethodRule    = new SpringMethodRule ();
-
+                                                              
     @Rule
     public SmartLogRule                   smartLogRule        = new SmartLogRule ();
-
+                                                              
     @Inject
     private AccountHistory                accountHistory;
-   
+                                          
     @Inject
     private AccountHistoryOperation       accountHistoryOperation;
-
+                                          
     @Before
     public void beforeTest () throws BankAccountException {
     }
-
+    
     @Test
     public void addHistoryLineAppendsOneLineToTheHistory () {
         // given an empty history
         Assertions.assertThat (this.accountHistory.getHistoryLines ()).isEmpty ();
         final AccountHistoryOperation historyLine = AccountHelper.getNewHistoryLine (accountHistoryOperation);
-
+        
         // when
         this.accountHistory.addHistoryLine (historyLine);
-
+        
         // then
         Assertions.assertThat (this.accountHistory.getHistoryLines ()).contains (historyLine);
-
+        
     }
 }

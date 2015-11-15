@@ -26,42 +26,42 @@ import org.toilelibre.libe.bank.testutils.TestConfig;
 
 @ContextConfiguration (loader = AnnotationConfigContextLoader.class, classes = { InMemoryAccountsAppConfig.class, TestConfig.class })
 public class AccountBalanceServiceTest {
-
+    
     @ClassRule
     public static final LogbackConfigRule LOGBACK_CONFIG_RULE = new LogbackConfigRule ();
-
+                                                              
     @ClassRule
     public static final SpringClassRule   SPRING_CLASS_RULE   = new SpringClassRule ();
-
+                                                              
     @Rule
     public final SpringMethodRule         springMethodRule    = new SpringMethodRule ();
-
+                                                              
     @Rule
     public SmartLogRule                   smartLogRule        = new SmartLogRule ();
     @Inject
     private CreateAccountService          createAccountService;
-    
+                                          
     @Inject
     private RemoveAccountService          removeAccountService;
-    
+                                          
     @Inject
     private AccountBalanceService         accountBalanceService;
-    
+                                          
     @Inject
     private AccountHistoryOperationRule   historyRule;
-    
+                                          
     @Inject
     private AccountBalanceRule            accountBalanceRule;
-    
+                                          
     @Inject
-    private AccountHelper               accountHelper;
-    
+    private AccountHelper                 accountHelper;
+                                          
     @Inject
     private AccountRule                   accountRule;
-    
+                                          
     @Inject
     private AccountOperationService       accountOperationService;
-
+                                          
     @Before
     public void clearAccounts () {
         this.removeAccountService.removeAll ();
@@ -69,43 +69,43 @@ public class AccountBalanceServiceTest {
     
     @Test
     public void addToBalanceInServiceShouldWork () throws BankAccountException {
-        //given
+        // given
         String iban = this.accountHelper.getEmptyAccount ();
         this.createAccountService.create (iban, accountRule);
         
-        //when
-        this.accountOperationService.deposit  (iban, 100, this.accountBalanceRule, this.historyRule);
+        // when
+        this.accountOperationService.deposit (iban, 100, this.accountBalanceRule, this.historyRule);
         
-        //then
+        // then
         Assertions.assertThat (this.accountBalanceService.get (iban).getBalance ()).isEqualTo (100);
     }
     
     @Test
     public void withdrawBalanceInServiceShouldWork () throws BankAccountException {
-        //given
+        // given
         String iban = this.accountHelper.getEmptyAccount ();
         this.createAccountService.create (iban, accountRule);
-        this.accountOperationService.deposit  (iban, 100, this.accountBalanceRule, this.historyRule);
+        this.accountOperationService.deposit (iban, 100, this.accountBalanceRule, this.historyRule);
         
-        //when
-        this.accountOperationService.withdraw  (iban, 30, this.accountBalanceRule, this.historyRule);
+        // when
+        this.accountOperationService.withdraw (iban, 30, this.accountBalanceRule, this.historyRule);
         
-        //then
+        // then
         Assertions.assertThat (this.accountBalanceService.get (iban).getBalance ()).isEqualTo (70);
     }
     
     @Test (expected = IllegalBalanceException.class)
     public void withdrawTooMuchShouldDiscardTheTransaction () throws BankAccountException {
-        //given
+        // given
         String iban = this.accountHelper.getEmptyAccount ();
         this.createAccountService.create (iban, accountRule);
-        this.accountOperationService.deposit  (iban, 100, this.accountBalanceRule, this.historyRule);
+        this.accountOperationService.deposit (iban, 100, this.accountBalanceRule, this.historyRule);
         
-        //when
+        // when
         try {
-            this.accountOperationService.withdraw  (iban, 130, this.accountBalanceRule, this.historyRule);
+            this.accountOperationService.withdraw (iban, 130, this.accountBalanceRule, this.historyRule);
         } catch (IllegalBalanceException ibe) {
-            //then
+            // then
             Assertions.assertThat (this.accountBalanceService.get (iban).getBalance ()).isEqualTo (100);
             throw ibe;
         }

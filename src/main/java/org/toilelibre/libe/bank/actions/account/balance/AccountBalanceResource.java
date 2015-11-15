@@ -21,18 +21,18 @@ import org.toilelibre.libe.bank.model.account.balance.AccountBalanceService;
 
 @RestController
 public class AccountBalanceResource {
-
+    
     private static Logger         LOGGER = LoggerFactory.getLogger (AccountBalanceResource.class);
-
+                                         
     @Inject
     private AccountBalanceService accountBalanceService;
-    
+                                  
     @Inject
     private AccountBalanceRule    accountBalanceRule;
-
+                                  
     @Inject
     private LinkHelper            linkHelper;
-
+                                  
     @RequestMapping (method = RequestMethod.GET, path = "/account/{iban}/balance")
     public Response<AccountBalance> getBalance (@PathVariable final String iban) throws NoSuchAccountException {
         AccountBalanceResource.LOGGER.info ("Trying to find account balance of account " + iban);

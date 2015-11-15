@@ -7,15 +7,15 @@ import org.toilelibre.libe.bank.model.account.balance.IllegalBalanceException;
 import org.toilelibre.libe.bank.model.account.balance.IllegalOverdraftValueException;
 
 public class CustomerAccountBalance implements AccountBalance {
-
+    
     private double balance;
     private double overdraft;
-
+                   
     public CustomerAccountBalance () {
         this.balance = 0;
         this.overdraft = 0;
     }
-
+    
     @Override
     public void add (final Double addedAmount, final AccountBalanceRule rule) throws IllegalAddOperationException {
         if (!rule.canAddThisAmount (addedAmount)) {
@@ -23,17 +23,17 @@ public class CustomerAccountBalance implements AccountBalance {
         }
         this.balance += addedAmount;
     }
-
+    
     @Override
     public Double getBalance () {
         return this.balance;
     }
-
+    
     @Override
     public Double getOverdraft () {
         return this.overdraft;
     }
-
+    
     @Override
     public Double withdrawAndReportBalance (final Double withdrawnAmount, final AccountBalanceRule rule) throws IllegalBalanceException {
         if (!rule.withdrawPermitted (this.balance - withdrawnAmount, this.overdraft)) {
@@ -42,7 +42,7 @@ public class CustomerAccountBalance implements AccountBalance {
         this.balance -= withdrawnAmount;
         return this.balance;
     }
-
+    
     @Override
     public void setOverdraft (final Double overdraft1, final AccountBalanceRule rule) throws IllegalOverdraftValueException {
         if (!rule.canSetThisOverdraft (this.balance, overdraft1)) {
@@ -50,7 +50,7 @@ public class CustomerAccountBalance implements AccountBalance {
         }
         this.overdraft = overdraft1;
     }
-
+    
     /**
      * AccountBalance is an entity
      *

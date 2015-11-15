@@ -26,19 +26,20 @@ public class WebAppInitializer implements WebApplicationInitializer {
         servletContext.addListener (new LogbackConfigListener ());
         servletContext.addListener (new ContextLoaderListener (context));
         this.setServletOptions (servletContext.addServlet ("DispatcherServlet", new DispatcherServlet (context)));
-        servletContext.addFilter (MDCFilter.class.getSimpleName (), MDCFilter.class).addMappingForUrlPatterns (EnumSet.of (DispatcherType.REQUEST, DispatcherType.ERROR), true, "/*");
+        servletContext.addFilter (MDCFilter.class.getSimpleName (), MDCFilter.class).addMappingForUrlPatterns (EnumSet.of (DispatcherType.REQUEST, DispatcherType.ERROR), true,
+                "/*");
     }
-
+    
     private void setServletOptions (final Dynamic dispatcher) {
         dispatcher.setLoadOnStartup (1);
         dispatcher.setInitParameter ("throwExceptionIfNoHandlerFound", "true");
         dispatcher.addMapping ("/api/*");
     }
-
+    
     private AnnotationConfigWebApplicationContext getContext () {
         final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext ();
         context.setConfigLocation (WebAppConfig.class.getName ());
         return context;
     }
-
+    
 }

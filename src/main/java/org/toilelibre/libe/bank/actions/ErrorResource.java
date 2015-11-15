@@ -28,7 +28,7 @@ import org.toilelibre.libe.bank.model.account.error.ErrorCode.Kind;
 @ControllerAdvice
 public class ErrorResource {
     private static Logger LOGGER = LoggerFactory.getLogger (ErrorResource.class);
-
+    
     @RequestMapping (path = "notFound")
     @ExceptionHandler (NoHandlerFoundException.class)
     @ResponseStatus (code = HttpStatus.NOT_FOUND)
@@ -36,23 +36,25 @@ public class ErrorResource {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
         return factory.objectNode ().put ("name", "APINotFound").put ("description", "This API does not exist").put ("kind", Kind.BAD_INPUT.name ());
     }
-
+    
     @RequestMapping (path = "badMethod")
     @ExceptionHandler (HttpRequestMethodNotSupportedException.class)
     @ResponseStatus (code = HttpStatus.METHOD_NOT_ALLOWED)
     public ObjectNode badMethod () {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
-        return factory.objectNode ().put ("name", "BadMethodOfAPI").put ("description", "This API exists, but the request method does not exist.").put ("kind", Kind.BAD_INPUT.name ());
+        return factory.objectNode ().put ("name", "BadMethodOfAPI").put ("description", "This API exists, but the request method does not exist.").put ("kind",
+                Kind.BAD_INPUT.name ());
     }
-
+    
     @RequestMapping (path = "badEntityFormat")
     @ExceptionHandler (HttpMediaTypeNotSupportedException.class)
     @ResponseStatus (code = HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     public ObjectNode badEntityFormat () {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
-        return factory.objectNode ().put ("name", "BadEntityFormat").put ("description", "This API does not understand this input format. It accepts JSON only.").put ("kind", Kind.BAD_INPUT.name ());
+        return factory.objectNode ().put ("name", "BadEntityFormat").put ("description", "This API does not understand this input format. It accepts JSON only.").put ("kind",
+                Kind.BAD_INPUT.name ());
     }
-
+    
     @RequestMapping (path = "internalServerError")
     @ExceptionHandler (RuntimeException.class)
     @ResponseStatus (code = HttpStatus.INTERNAL_SERVER_ERROR)
@@ -60,12 +62,14 @@ public class ErrorResource {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
         final UUID errorUuid = UUID.randomUUID ();
         ErrorResource.LOGGER.error ("An internal server error has happened (errorUuid : " + errorUuid + ")", exception);
-        return factory.objectNode ().put ("name", "InternalServerError").put ("description", "This API could not respond correctly. There was an API bug during the service").put ("kind", HttpStatus.INTERNAL_SERVER_ERROR.name ()).put ("errorUuid", errorUuid.toString ());
+        return factory.objectNode ().put ("name", "InternalServerError").put ("description", "This API could not respond correctly. There was an API bug during the service")
+                .put ("kind", HttpStatus.INTERNAL_SERVER_ERROR.name ()).put ("errorUuid", errorUuid.toString ());
     }
-
+    
     @RequestMapping (path = "error")
     @ExceptionHandler (BankAccountException.class)
-    public ObjectNode handleApplicationException (final HttpServletRequest request, final HttpServletResponse response, final BankAccountException exception) throws JsonProcessingException {
+    public ObjectNode handleApplicationException (final HttpServletRequest request, final HttpServletResponse response, final BankAccountException exception)
+            throws JsonProcessingException {
         final ErrorCode code = exception.getCode ();
         ErrorResource.LOGGER.error (code.getKind ().name () + " while trying to use \"" + request.getRequestURI () + "\" with verb \"" + request.getMethod () + "\" : ", exception);
         response.setStatus (KindToHttpStatus.from (code.getKind ()));

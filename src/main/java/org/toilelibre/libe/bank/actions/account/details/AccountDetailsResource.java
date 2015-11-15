@@ -24,27 +24,27 @@ import org.toilelibre.libe.bank.model.account.details.AccountDetailsService;
 
 @RestController
 public class AccountDetailsResource {
-
+    
     private static Logger          LOGGER = LoggerFactory.getLogger (AccountDetailsResource.class);
-
+                                          
     @Inject
     private AccountDetailsService  accountDetailsService;
-
+                                   
     @Inject
     private LinkHelper             linkHelper;
-
+                                   
     @Inject
     private AccountDetails.Builder detailsBuilder;
-
+                                   
     @Inject
     private AccountDetailsRule     accountDetailsRule;
-
+                                   
     @RequestMapping (method = RequestMethod.GET, path = "/account/{iban}/details")
     public Response<AccountDetails> getDetails (@PathVariable final String iban) throws NoSuchAccountException {
         AccountDetailsResource.LOGGER.info ("Trying to find account details of account " + iban);
         return new Response<AccountDetails> (this.linkHelper.get (), this.accountDetailsService.view (iban));
     }
-
+    
     @RequestMapping (method = RequestMethod.PUT, path = "/account/{iban}/details")
     public Response<AccountDetails> setDetails (@PathVariable final String iban, @RequestBody final JsonNode input) throws BankAccountException {
         AccountDetailsResource.LOGGER.info ("Setting the details of the account " + iban);

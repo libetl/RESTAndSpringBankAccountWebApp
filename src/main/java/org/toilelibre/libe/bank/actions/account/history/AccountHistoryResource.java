@@ -17,15 +17,15 @@ import org.toilelibre.libe.bank.model.account.history.AccountHistoryService;
 
 @RestController
 public class AccountHistoryResource {
-
+    
     private static Logger         LOGGER = LoggerFactory.getLogger (AccountHistoryResource.class);
-
+                                         
     @Inject
     private AccountHistoryService accountHistoryService;
-
+                                  
     @Inject
     private LinkHelper            linkHelper;
-
+                                  
     @RequestMapping (method = RequestMethod.GET, path = "/account/{iban}/history")
     public Response<AccountHistory> getHistory (@PathVariable final String iban) throws NoSuchAccountException {
         AccountHistoryResource.LOGGER.info ("Trying to find account history of account " + iban);

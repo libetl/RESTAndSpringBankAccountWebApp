@@ -26,39 +26,39 @@ import org.toilelibre.libe.bank.testutils.TestConfig;
 
 @ContextConfiguration (loader = AnnotationConfigContextLoader.class, classes = { InMemoryAccountsAppConfig.class, TestConfig.class })
 public class AccountDetailsServiceTest {
-
+    
     @ClassRule
     public static final LogbackConfigRule LOGBACK_CONFIG_RULE = new LogbackConfigRule ();
-
+                                                              
     @ClassRule
     public static final SpringClassRule   SPRING_CLASS_RULE   = new SpringClassRule ();
-
+                                                              
     @Rule
     public final SpringMethodRule         springMethodRule    = new SpringMethodRule ();
-
+                                                              
     @Rule
     public SmartLogRule                   smartLogRule        = new SmartLogRule ();
     @Inject
     private CreateAccountService          createAccountService;
-    
+                                          
     @Inject
     private FindAccountService            findAccountService;
-    
+                                          
     @Inject
     private AccountDetailsService         accountDetailsService;
-    
+                                          
     @Inject
     private AccountDetailsRule            accountDetailsRule;
-    
+                                          
     @Inject
     private AccountDetails.Builder        detailsBuilder;
-    
+                                          
     @Inject
-    private AccountHelper               accountHelper;
-    
+    private AccountHelper                 accountHelper;
+                                          
     @Inject
     private AccountRule                   accountRule;
-
+                                          
     @Test
     public void setDetailsShouldWorkIfAllFieldsAreSet () throws BankAccountException {
         // given an account without detail
@@ -67,11 +67,11 @@ public class AccountDetailsServiceTest {
         // when
         this.accountDetailsService.update (iban, this.accountHelper.getDetails (this.detailsBuilder, this.accountDetailsRule));
         
-        //then
+        // then
         AccountDetails details = this.accountDetailsService.view (iban);
-        Assertions.assertThat (this.findAccountService.find (iban)).isEqualTo(iban);
+        Assertions.assertThat (this.findAccountService.find (iban)).isEqualTo (iban);
         Assertions.assertThat (details).isNotNull ();
-        Assertions.assertThat (details.getSwiftCode()).isNotNull ();
-        Assertions.assertThat (this.accountDetailsRule.hasCorrectSwiftCode(details.getSwiftCode())).isTrue ();
+        Assertions.assertThat (details.getSwiftCode ()).isNotNull ();
+        Assertions.assertThat (this.accountDetailsRule.hasCorrectSwiftCode (details.getSwiftCode ())).isTrue ();
     }
 }

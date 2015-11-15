@@ -25,47 +25,47 @@ import org.toilelibre.libe.bank.testutils.TestConfig;
 
 @ContextConfiguration (loader = AnnotationConfigContextLoader.class, classes = { InMemoryAccountsAppConfig.class, TestConfig.class })
 public class RemoveAccountServiceTest {
-
+    
     @ClassRule
     public static final LogbackConfigRule LOGBACK_CONFIG_RULE = new LogbackConfigRule ();
-
+                                                              
     @ClassRule
     public static final SpringClassRule   SPRING_CLASS_RULE   = new SpringClassRule ();
-
+                                                              
     @Rule
     public final SpringMethodRule         springMethodRule    = new SpringMethodRule ();
-
+                                                              
     @Rule
     public SmartLogRule                   smartLogRule        = new SmartLogRule ();
-
+                                                              
     @Inject
     private AccountRule                   accountRule;
-    
+                                          
     @Inject
     private CreateAccountService          createAccountService;
-    
+                                          
     @Inject
     private RemoveAccountService          removeAccountService;
-    
+                                          
     @Inject
-    private FindAccountService           findAccountService;
-    
+    private FindAccountService            findAccountService;
+                                          
     @Inject
     private AccountHelper                 accountHelper;
-
+                                          
     @Before
     public void clearData () {
         this.removeAccountService.removeAll ();
     }
-
+    
     @Test (expected = NoSuchAccountException.class)
     public void removeAccountShouldWork () throws BankAccountException {
         // given an account
         this.createAccountService.create (this.accountHelper.getEmptyAccount (), this.accountRule);
-
+        
         // when
         this.removeAccountService.remove (this.accountHelper.getEmptyAccount ());
-
+        
         // then should fail
         this.findAccountService.find (this.accountHelper.getEmptyAccount ());
     }
@@ -73,10 +73,10 @@ public class RemoveAccountServiceTest {
     @Test (expected = NoSuchAccountException.class)
     public void removeNotExistingAccountShouldThrowNoSuchAccountException () throws BankAccountException {
         // given nothing
-
+        
         // when
         this.removeAccountService.remove (this.accountHelper.getEmptyAccount ());
-
+        
         // then should fail
         
     }

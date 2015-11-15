@@ -29,42 +29,42 @@ import org.toilelibre.libe.bank.testutils.TestConfig;
 
 @ContextConfiguration (loader = AnnotationConfigContextLoader.class, classes = { InMemoryAccountsAppConfig.class, TestConfig.class })
 public class AccountHistoryServiceTest {
-
+    
     @ClassRule
     public static final LogbackConfigRule LOGBACK_CONFIG_RULE = new LogbackConfigRule ();
-
+                                                              
     @ClassRule
     public static final SpringClassRule   SPRING_CLASS_RULE   = new SpringClassRule ();
-
+                                                              
     @Rule
     public final SpringMethodRule         springMethodRule    = new SpringMethodRule ();
-
+                                                              
     @Rule
     public SmartLogRule                   smartLogRule        = new SmartLogRule ();
     @Inject
     private CreateAccountService          createAccountService;
-    
+                                          
     @Inject
     private RemoveAccountService          removeAccountService;
-    
+                                          
     @Inject
     private AccountHistoryService         accountHistoryService;
-    
+                                          
     @Inject
     private AccountHistoryOperationRule   historyRule;
-    
+                                          
     @Inject
     private AccountBalanceRule            accountBalanceRule;
-    
+                                          
     @Inject
-    private AccountHelper               accountHelper;
-    
+    private AccountHelper                 accountHelper;
+                                          
     @Inject
     private AccountRule                   accountRule;
-    
+                                          
     @Inject
     private AccountOperationService       accountOperationService;
-
+                                          
     @Before
     public void clearAccounts () {
         this.removeAccountService.removeAll ();
@@ -72,14 +72,14 @@ public class AccountHistoryServiceTest {
     
     @Test
     public void anOperationShouldAppendToTheHistoryLines () throws BankAccountException {
-        //given
+        // given
         String iban = this.accountHelper.getEmptyAccount ();
         this.createAccountService.create (iban, accountRule);
         
-        //when
-        this.accountOperationService.deposit  (iban, 100, this.accountBalanceRule, this.historyRule);
+        // when
+        this.accountOperationService.deposit (iban, 100, this.accountBalanceRule, this.historyRule);
         
-        //then
+        // then
         List<AccountHistoryOperation> operations = this.accountHistoryService.view (iban).getHistoryLines ();
         Assertions.assertThat (operations).isNotNull ().isNotEmpty ().hasSize (1);
         Assertions.assertThat (operations.get (0).getAmount ()).isEqualTo (100);
@@ -87,16 +87,16 @@ public class AccountHistoryServiceTest {
     
     @Test (expected = IllegalBalanceException.class)
     public void withdrawTooMuchShouldDiscardTheTransaction () throws BankAccountException {
-        //given
+        // given
         String iban = this.accountHelper.getEmptyAccount ();
         this.createAccountService.create (iban, accountRule);
-        this.accountOperationService.deposit  (iban, 100, this.accountBalanceRule, this.historyRule);
+        this.accountOperationService.deposit (iban, 100, this.accountBalanceRule, this.historyRule);
         
-        //when
+        // when
         try {
-            this.accountOperationService.withdraw  (iban, 130, this.accountBalanceRule, this.historyRule);
+            this.accountOperationService.withdraw (iban, 130, this.accountBalanceRule, this.historyRule);
         } catch (IllegalBalanceException ibe) {
-            //then
+            // then
             List<AccountHistoryOperation> operations = this.accountHistoryService.view (iban).getHistoryLines ();
             Assertions.assertThat (operations).isNotNull ().isNotEmpty ().hasSize (1);
             Assertions.assertThat (operations.get (0).getAmount ()).isEqualTo (100);
