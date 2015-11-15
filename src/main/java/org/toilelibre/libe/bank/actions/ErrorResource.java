@@ -34,7 +34,7 @@ public class ErrorResource {
     @ResponseStatus (code = HttpStatus.NOT_FOUND)
     public ObjectNode notFound () {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
-        return factory.objectNode ().put ("name", "APINotFound").put ("description", "This API does not exist").put ("kind", Kind.BAD_INPUT.name ());
+        return factory.objectNode ().put ("ok", 0).put ("name", "APINotFound").put ("description", "This API does not exist").put ("kind", Kind.BAD_INPUT.name ());
     }
     
     @RequestMapping (path = "badMethod")
@@ -42,7 +42,7 @@ public class ErrorResource {
     @ResponseStatus (code = HttpStatus.METHOD_NOT_ALLOWED)
     public ObjectNode badMethod () {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
-        return factory.objectNode ().put ("name", "BadMethodOfAPI").put ("description", "This API exists, but the request method does not exist.").put ("kind",
+        return factory.objectNode ().put ("ok", 0).put ("name", "BadMethodOfAPI").put ("description", "This API exists, but the request method does not exist.").put ("kind",
                 Kind.BAD_INPUT.name ());
     }
     
@@ -51,7 +51,7 @@ public class ErrorResource {
     @ResponseStatus (code = HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     public ObjectNode badEntityFormat () {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
-        return factory.objectNode ().put ("name", "BadEntityFormat").put ("description", "This API does not understand this input format. It accepts JSON only.").put ("kind",
+        return factory.objectNode ().put ("ok", 0).put ("name", "BadEntityFormat").put ("description", "This API does not understand this input format. It accepts JSON only.").put ("kind",
                 Kind.BAD_INPUT.name ());
     }
     
@@ -62,7 +62,7 @@ public class ErrorResource {
         final JsonNodeFactory factory = JsonNodeFactory.instance;
         final UUID errorUuid = UUID.randomUUID ();
         ErrorResource.LOGGER.error ("An internal server error has happened (errorUuid : " + errorUuid + ")", exception);
-        return factory.objectNode ().put ("name", "InternalServerError").put ("description", "This API could not respond correctly. There was an API bug during the service")
+        return factory.objectNode ().put ("ok", 0).put ("name", "InternalServerError").put ("description", "This API could not respond correctly. There was an API bug during the service")
                 .put ("kind", HttpStatus.INTERNAL_SERVER_ERROR.name ()).put ("errorUuid", errorUuid.toString ());
     }
     
@@ -74,6 +74,6 @@ public class ErrorResource {
         ErrorResource.LOGGER.error (code.getKind ().name () + " while trying to use \"" + request.getRequestURI () + "\" with verb \"" + request.getMethod () + "\" : ", exception);
         response.setStatus (KindToHttpStatus.from (code.getKind ()));
         final JsonNodeFactory factory = JsonNodeFactory.instance;
-        return factory.objectNode ().put ("name", code.name ()).put ("description", code.getDescription ()).put ("kind", code.getKind ().name ());
+        return factory.objectNode ().put ("ok", 0).put ("name", code.name ()).put ("description", code.getDescription ()).put ("kind", code.getKind ().name ());
     }
 }
