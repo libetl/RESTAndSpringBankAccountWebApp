@@ -1,20 +1,26 @@
 package org.toilelibre.libe.bank.actions;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 public class Link {
+
+    @XmlAttribute
     private final String           rel;
+    @XmlAttribute
     private final String           href;
+    @XmlElement (name="methods")
     private final RequestMethod [] methods;
-    private final JsonNode         params;
+    @XmlElement (name="params")
+    private final String []        params;
                                    
-    public Link (final String rel1, final String href1, RequestMethod [] methods1, JsonNode params1) {
+    public Link (final String rel1, final String href1, RequestMethod [] methods1, String [] params) {
         this.rel = rel1;
         this.href = href1;
         this.methods = methods1;
-        this.params = params1;
+        this.params = params;
     }
     
     public String getRel () {
@@ -29,7 +35,7 @@ public class Link {
         return methods.clone ();
     }
     
-    public JsonNode getParams () {
+    public String [] getParams () {
         return params;
     }
     

@@ -20,8 +20,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
 public class LinkLister {
     
     @Inject
@@ -48,11 +46,10 @@ public class LinkLister {
     }
     
     private Link entryToLink (Entry<RequestMappingInfo, HandlerMethod> entry) {
-        final JsonNodeFactory factory = JsonNodeFactory.instance;
         return new Link (this.methodToFriendlyName (entry.getValue ().getMethod ()),
                 this.getBaseUrl () + entry.getKey ().getPatternsCondition ().getPatterns ().iterator ().next ().replaceFirst ("^/", ""),
                 entry.getValue ().getMethodAnnotation (RequestMapping.class).method (),
-                factory.pojoNode (this.filterNotPayloadParameters (entry.getValue ().getMethod (), entry.getValue ().getMethod ().getParameterTypes ())));
+                this.filterNotPayloadParameters (entry.getValue ().getMethod (), entry.getValue ().getMethod ().getParameterTypes ()));
     }
     
     private String getBaseUrl () {

@@ -37,10 +37,9 @@ public class LinkHelper {
         if (method == null) {
             throw new RestClientException ("API method not found");
         }
-        final JsonNodeFactory factory = JsonNodeFactory.instance;
         return new Link (this.linkLister.stackTraceElementToFriendlyName (stackTraceElement), this.httpServletRequest.getRequestURL ().toString (),
                 new RequestMethod [] { RequestMethod.valueOf (this.httpServletRequest.getMethod ()) },
-                factory.pojoNode (this.linkLister.filterNotPayloadParameters (method, method.getParameterTypes ())));
+                this.linkLister.filterNotPayloadParameters (method, method.getParameterTypes ()));
     }
     
     private Method findMethod (StackTraceElement stackTraceElement) throws ClassNotFoundException {
@@ -78,7 +77,10 @@ public class LinkHelper {
         for (Link link : links) {
             String href = link.getHref ();
             href = this.findPossibleReplacements (node, href);
-            array.add ( ((ObjectNode) factory.objectNode ().put ("rel", link.getRel ()).put ("href", href).set ("params", link.getParams ())).set ("methods",
+            array.add ( ((ObjectNode) factory.objectNode ().put ("rel", link.getRel ())
+                                                           .put ("href", href)
+                                                           .set ("params", factory.pojoNode (link.getParams ())))
+                                                           .set ("methods",
                     factory.pojoNode (link.getMethods ())));
                     
         }

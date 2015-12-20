@@ -1,12 +1,22 @@
 package org.toilelibre.libe.bank.actions;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement (name="response")
 public class Response<T> {
     
-    private final Link   self;
-    private final String type;
-    private final T      content;
-    private final int    ok;
-                         
+    @XmlElement (name="self")
+    private Link   self;
+    @XmlElement (name="type")
+    private String type;
+    private T      content;
+    @XmlElement (name="ok")
+    private int    ok;
+                     
+    public Response (){
+    }
+    
     public Response (final Link self1, final T content1) {
         this.self = self1;
         this.type = content1.getClass ().getSimpleName ();
