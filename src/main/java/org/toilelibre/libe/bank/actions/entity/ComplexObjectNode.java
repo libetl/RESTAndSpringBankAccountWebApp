@@ -1,62 +1,41 @@
 package org.toilelibre.libe.bank.actions.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 @XmlRootElement(name = "resource")
-@XmlJavaTypeAdapter(value = ComplexObjectNode.Adapter.class)
+@XmlSeeAlso({PrimitiveNode.class, ArrayNode.class})
 public class ComplexObjectNode extends HashMap<String, Node> implements ObjectNode{
 
-    @XmlType
-    public class KeyValue {
-        public KeyValue() {
+
+    static class Pair<T1, T2> {
+        private final T1 key;
+        private final T2 value;
+
+        @XmlElement (name = "key")
+        public T1 getKey () {
+            return key;
         }
 
-        public KeyValue(String key, String value) {
-            this.key = key;
-            this.value = value;
+        @XmlElement (name = "value")
+        public T2 getValue () {
+            return value;
         }
 
-        //obviously needs setters/getters
-        String key;
-        String value;
+        public Pair (T1 key1, T2 value1) {
+            this.key = key1;
+            this.value = value1;
+        }
     }
-    public class Adapter extends XmlAdapter<List<KeyValue>, ComplexObjectNode> {
-
-
-        @Override
-        public ComplexObjectNode unmarshal(List<KeyValue> v) throws Exception {
-            Map<String, Node> map = new HashMap<>(v.size());
-            for (KeyValue keyValue : v) {
-                map.put(keyValue.key, NodeFactory.instance.pojoNode (keyValue.value));
-            }
-            return new ComplexObjectNode (map);
-        }
-
-        @Override
-        public List<KeyValue> marshal(ComplexObjectNode v) throws Exception {
-            Set<String> keys = v.keySet();
-            List<KeyValue> results = new ArrayList<>(v.size());
-            for (String key : keys) {
-                results.add(new KeyValue(key, v.get(key).toString ()));
-            }
-            return results;
-        }
-
     
-    }
-
     /**
      * 
      */
@@ -73,9 +52,13 @@ public class ComplexObjectNode extends HashMap<String, Node> implements ObjectNo
     }
 
 
-    @Override
-    public Set<Entry<String, Node>> entrySet () {
-        return super.entrySet ();
+    @XmlElement (name = "entry")
+    public List<Pair<String, Node>> getEntries () {
+        List<Pair<String, Node>> list = new LinkedList<Pair<String, Node>> ();
+        for (Map.Entry<String, Node> entry : super.entrySet ()) {
+            list.add (new Pair<String, Node> (entry.getKey (), entry.getValue ()));
+        }
+        return list;
     }
     
     

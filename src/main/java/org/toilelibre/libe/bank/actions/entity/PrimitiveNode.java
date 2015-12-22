@@ -3,7 +3,8 @@ package org.toilelibre.libe.bank.actions.entity;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,7 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 
 @JsonSerialize (using = PrimitiveNode.PrimitiveNodeWriter.class)
-@XmlType
+@XmlRootElement
 public class PrimitiveNode implements Node {
 
     public static class PrimitiveNodeWriter extends JsonSerializer<PrimitiveNode> {
@@ -29,18 +30,23 @@ public class PrimitiveNode implements Node {
         
     }
     
+    private Serializable value;
 
-    private Object value;
+    public PrimitiveNode () {
+    }
     
     public PrimitiveNode (Serializable value1) {
         this.value = value1;
     }
 
-    public PrimitiveNode () {
-    }
 
     @Override
     public String asText () {
+        return this.value.toString ();
+    }
+
+    @XmlElement (name = "primitive")
+    public String getString () {
         return this.value.toString ();
     }
     

@@ -3,6 +3,9 @@ package org.toilelibre.libe.bank.impl.account.details;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+
 import org.toilelibre.libe.bank.impl.account.details.PersonAccountDetailsContact.Title;
 import org.toilelibre.libe.bank.model.account.details.AccountDetails;
 import org.toilelibre.libe.bank.model.account.details.AccountDetailsContact;
@@ -14,14 +17,21 @@ import org.toilelibre.libe.bank.model.account.details.IllegalSwiftCodeException;
  * Account Details is A VO (even if there are some unique ids in the data) It
  * does not need to be cloned because the pieces of info are immutable
  */
+@XmlSeeAlso ({PersonAccountDetailsContact.class, CompanyAccountDetailsContact.class})
 public class CustomerAccountDetails implements AccountDetails {
-    
+
+    @XmlElement (name="swiftCode")
     private final String                swiftCode;
     private final AccountDetailsContact contact;
+    @XmlElement (name="address")
     private final String                address;
+    @XmlElement (name="zipCode")
     private final String                zipCode;
+    @XmlElement (name="city")
     private final String                city;
+    @XmlElement (name="state")
     private final String                state;
+    @XmlElement (name="country")
     private final String                country;
                                         
     private CustomerAccountDetails (final String swiftCode1, final AccountDetailsContact contact1, final String address1, final String zipCode1, final String city1,

@@ -3,9 +3,13 @@ package org.toilelibre.libe.bank.actions.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
-@XmlType
+@XmlRootElement(name = "array")
+@XmlSeeAlso({PrimitiveNode.class, ComplexObjectNode.class})
 public class ArrayNode extends ArrayList<Node> implements Node {
 
     /**
@@ -17,6 +21,12 @@ public class ArrayNode extends ArrayList<Node> implements Node {
         return super.add (node);
     }
 
+    @XmlElementWrapper
+    @XmlAnyElement
+    public ArrayList<Node> getContent () {
+        return this;
+    }
+    
     @Override
     public String asText () {
         return this.toString ();

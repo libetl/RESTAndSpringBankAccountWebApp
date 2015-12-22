@@ -2,8 +2,17 @@ package org.toilelibre.libe.bank.actions;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+
+import org.toilelibre.libe.bank.actions.entity.ArrayNode;
+import org.toilelibre.libe.bank.actions.entity.ComplexObjectNode;
+import org.toilelibre.libe.bank.actions.entity.PrimitiveNode;
+import org.toilelibre.libe.bank.impl.account.balance.CustomerAccountBalance;
+import org.toilelibre.libe.bank.impl.account.details.CustomerAccountDetails;
 
 @XmlRootElement (name="response")
+@XmlSeeAlso({ArrayNode.class, PrimitiveNode.class, ComplexObjectNode.class, CustomerAccountDetails.class, CustomerAccountBalance.class
+             })
 public class Response<T> {
     
     @XmlElement (name="self")
