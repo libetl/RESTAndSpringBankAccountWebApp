@@ -10,10 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestClientException;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.toilelibre.libe.bank.actions.entity.ArrayNode;
+import org.toilelibre.libe.bank.actions.entity.NodeFactory;
+import org.toilelibre.libe.bank.actions.entity.ObjectNode;
 
 public class LinkHelper {
     
@@ -64,19 +63,19 @@ public class LinkHelper {
         return href;
     }
     
-    public ObjectNode surroundWithLinks (ObjectNode node) {
+    public ObjectNode surroundWithLinks (ObjectNode objectNode) {
         Link currentLink = this.get (Thread.currentThread ().getStackTrace () [2]);
         Link currentGenericLink = this.getGenericLink (currentLink);
-        final JsonNodeFactory factory = JsonNodeFactory.instance;
-        ArrayNode array = (ArrayNode) node.get ("links");
+        final NodeFactory factory = NodeFactory.instance;
+        ArrayNode array = (ArrayNode) objectNode.get ("links");
         if (array == null) {
             array = factory.arrayNode ();
-            node.set ("links", array);
+            objectNode.set ("links", array);
         }
         final List<Link> links = this.getListOfSublinks (currentGenericLink);
         for (Link link : links) {
             String href = link.getHref ();
-            href = this.findPossibleReplacements (node, href);
+            href = this.findPossibleReplacements (objectNode, href);
             array.add ( ((ObjectNode) factory.objectNode ().put ("rel", link.getRel ())
                                                            .put ("href", href)
                                                            .set ("params", factory.pojoNode (link.getParams ())))
@@ -84,7 +83,7 @@ public class LinkHelper {
                     factory.pojoNode (link.getMethods ())));
                     
         }
-        return node;
+        return objectNode;
     }
     
     private Link getGenericLink (Link link) {

@@ -19,7 +19,7 @@ public class WebAppContentNegociationConfig extends WebMvcConfigurerAdapter {
                   .ignoreAcceptHeader (false)
                   .useJaf (false)
                   .defaultContentTypeStrategy (new HeaderContentNegotiationStrategy ())
-                  .defaultContentType (MediaType.TEXT_HTML)
+                  .defaultContentType (MediaType.APPLICATION_JSON)
                   .mediaType ("html", MediaType.TEXT_HTML)
                   .mediaType ("xml", MediaType.APPLICATION_XML)
                   .mediaType ("json", MediaType.APPLICATION_JSON);

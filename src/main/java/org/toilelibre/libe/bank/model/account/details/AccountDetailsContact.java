@@ -1,6 +1,8 @@
 package org.toilelibre.libe.bank.model.account.details;
 
-public interface AccountDetailsContact {
+import org.toilelibre.libe.bank.model.BankObject;
+
+public interface AccountDetailsContact extends BankObject {
     
     String getReadableName ();
 }

@@ -3,8 +3,9 @@ package org.toilelibre.libe.bank.model.account.details;
 import java.util.Map;
 
 import org.toilelibre.libe.bank.impl.account.details.CustomerAccountDetails;
+import org.toilelibre.libe.bank.model.BankObject;
 
-public interface AccountDetails {
+public interface AccountDetails extends BankObject {
     
     /**
      * SWIFT Code number

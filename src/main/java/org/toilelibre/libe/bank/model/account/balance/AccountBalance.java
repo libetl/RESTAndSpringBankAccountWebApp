@@ -1,10 +1,12 @@
 package org.toilelibre.libe.bank.model.account.balance;
 
+import org.toilelibre.libe.bank.model.BankObject;
+
 /**
  * This class represents a simple account. It doesn't handle different
  * currencies, all money is supposed to be of standard currency EUR.
  */
-public interface AccountBalance {
+public interface AccountBalance extends BankObject {
     
     /**
      * Adds money to this account.

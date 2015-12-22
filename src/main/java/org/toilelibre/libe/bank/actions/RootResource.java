@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.toilelibre.libe.bank.actions.entity.NodeFactory;
+import org.toilelibre.libe.bank.actions.entity.ObjectNode;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @RestController
 public class RootResource {
@@ -23,7 +23,7 @@ public class RootResource {
     @RequestMapping (value = "/", method = RequestMethod.GET)
     public Response<ObjectNode> showAPIs (final HttpServletRequest request) throws JsonProcessingException {
         RootResource.LOGGER.info ("Showing Root Resource");
-        final JsonNodeFactory factory = JsonNodeFactory.instance;
+        final NodeFactory factory = NodeFactory.instance;
         return new Response<ObjectNode> (this.linkHelper.get (), this.linkHelper.surroundWithLinks (factory.objectNode ().put ("title", "root")));
     }
     

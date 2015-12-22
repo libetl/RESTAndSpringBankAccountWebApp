@@ -10,6 +10,7 @@ public class Response<T> {
     private Link   self;
     @XmlElement (name="type")
     private String type;
+    @XmlElement (name="content")
     private T      content;
     @XmlElement (name="ok")
     private int    ok;

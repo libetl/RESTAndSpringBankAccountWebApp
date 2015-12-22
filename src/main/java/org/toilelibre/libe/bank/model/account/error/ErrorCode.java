@@ -1,6 +1,8 @@
 package org.toilelibre.libe.bank.model.account.error;
 
-public enum ErrorCode {
+import org.toilelibre.libe.bank.model.BankObject;
+
+public enum ErrorCode implements BankObject {
     
     AccountAlreadyExists (Kind.CONFLICT, "This account already exists"), IllegalIban (Kind.BAD_INPUT, "An illegal iban code was typed"), IllegalAddOperation (Kind.BAD_INPUT,
             "This amount cannot be added"), IllegalBalance (Kind.FORBIDDEN, "The resulting balance is not permitted"), IllegalOverdraft (Kind.FORBIDDEN,

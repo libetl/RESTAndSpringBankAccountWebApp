@@ -2,7 +2,9 @@ package org.toilelibre.libe.bank.model.account.history;
 
 import java.util.List;
 
-public interface AccountHistory {
+import org.toilelibre.libe.bank.model.BankObject;
+
+public interface AccountHistory extends BankObject {
     
     /**
      * Method to get a list of the logged account operations
