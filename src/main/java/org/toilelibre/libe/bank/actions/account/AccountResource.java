@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.toilelibre.libe.bank.actions.LinkHelper;
 import org.toilelibre.libe.bank.actions.Response;
 import org.toilelibre.libe.bank.actions.entity.ArrayNode;
+import org.toilelibre.libe.bank.actions.entity.Node;
 import org.toilelibre.libe.bank.actions.entity.NodeFactory;
 import org.toilelibre.libe.bank.actions.entity.ObjectNode;
 import org.toilelibre.libe.bank.model.account.AccountRule;
@@ -49,10 +50,10 @@ public class AccountResource {
     }
     
     @RequestMapping (method = RequestMethod.GET, path = "/account/{iban}")
-    public Response<ObjectNode> getOneAccount (@PathVariable final String iban) throws NoSuchAccountException {
+    public Response<ObjectNode<Node>> getOneAccount (@PathVariable final String iban) throws NoSuchAccountException {
         AccountResource.LOGGER.info ("Trying to find account number " + iban);
         final NodeFactory factory = NodeFactory.instance;
-        return new Response<ObjectNode> (this.linkHelper.get (), this.linkHelper.surroundWithLinks (factory.objectNode ().put ("iban", this.findAccountService.find (iban))));
+        return new Response<ObjectNode<Node>> (this.linkHelper.get (), this.linkHelper.surroundWithLinks (factory.objectNode ().put ("iban", this.findAccountService.find (iban))));
     }
     
     @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}")

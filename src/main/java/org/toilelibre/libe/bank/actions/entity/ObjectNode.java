@@ -6,15 +6,15 @@ import java.util.Iterator;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType
-public interface ObjectNode extends Node {
+public interface ObjectNode<T extends Node> extends Node, Iterable<String> {
 
 
     public Node get (String string);
 
-    public Iterator<String> fieldNames ();
+    public Iterator<String> iterator ();
 
-    public ObjectNode set (String string, Node node);
+    public ObjectNode<T> set (String string, T node);
 
-    public ObjectNode put (String string, Serializable value);
+    public ObjectNode<T> put (String string, Serializable value);
 
 }

@@ -7,4 +7,6 @@ public interface Node {
 
 
     public String asText ();
+
+    public double asDouble ();
 }

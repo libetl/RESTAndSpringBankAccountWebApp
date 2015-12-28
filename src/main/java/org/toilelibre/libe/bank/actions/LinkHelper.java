@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestClientException;
 import org.toilelibre.libe.bank.actions.entity.ArrayNode;
+import org.toilelibre.libe.bank.actions.entity.Node;
 import org.toilelibre.libe.bank.actions.entity.NodeFactory;
 import org.toilelibre.libe.bank.actions.entity.ObjectNode;
 
@@ -52,8 +53,8 @@ public class LinkHelper {
         return null;
     }
     
-    private String findPossibleReplacements (final ObjectNode node, String href) {
-        final Iterator<String> fieldNames = node.fieldNames ();
+    private <T extends Node> String findPossibleReplacements (final ObjectNode<T> node, String href) {
+        final Iterator<String> fieldNames = node.iterator ();
         while (fieldNames.hasNext ()) {
             final String fieldName = fieldNames.next ();
             if (!"".equals (node.get (fieldName).asText ())) {
@@ -63,7 +64,7 @@ public class LinkHelper {
         return href;
     }
     
-    public ObjectNode surroundWithLinks (ObjectNode objectNode) {
+    public ObjectNode<Node> surroundWithLinks (ObjectNode<Node> objectNode) {
         Link currentLink = this.get (Thread.currentThread ().getStackTrace () [2]);
         Link currentGenericLink = this.getGenericLink (currentLink);
         final NodeFactory factory = NodeFactory.instance;
@@ -76,7 +77,7 @@ public class LinkHelper {
         for (Link link : links) {
             String href = link.getHref ();
             href = this.findPossibleReplacements (objectNode, href);
-            array.add ( ((ObjectNode) factory.objectNode ().put ("rel", link.getRel ())
+            array.add ( ((ObjectNode<Node>) factory.objectNode ().put ("rel", link.getRel ())
                                                            .put ("href", href)
                                                            .set ("params", factory.pojoNode (link.getParams ())))
                                                            .set ("methods",

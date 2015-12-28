@@ -1,6 +1,7 @@
 package org.toilelibre.libe.bank.actions.entity;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,16 +18,19 @@ public class NodeFactory {
         return new ArrayNode ();
     }
 
-    public ObjectNode objectNode () {
-        return new ComplexObjectNode ();
+    public <T extends Node> ObjectNode<T> objectNode () {
+        return new ComplexObjectNode<T> ();
     }
 
     public Node pojoNode (Object object) {
-        if (object.getClass ().isArray ()) {
+        if (object instanceof Node) {
+            return (Node) object;
+        }
+        if (object.getClass ().isArray () || object instanceof List) {
             return this.nodeAsArray (object);
         }
         if (object.getClass ().isPrimitive () || 
-                object instanceof CharSequence) {
+                object instanceof CharSequence || object instanceof Number) {
             return new PrimitiveNode ((Serializable)object);
         }
         return this.nodeAsMap (object);
@@ -42,11 +46,15 @@ public class NodeFactory {
     }
     private Node nodeAsMap (Object object) {
         ObjectMapper om = new ObjectMapper ();
-        System.out.println (object);
+        System.out.println (object + " ..." + object.getClass ().getSimpleName ());
         @SuppressWarnings ("unchecked")
         Map<String,Object> props = om.convertValue (object, Map.class);
-        ComplexObjectNode on = new ComplexObjectNode ();
-        on.addAll (props);
+        Map<String,Object> props2 = new HashMap<String, Object> ();
+        for (Map.Entry<String, Object> entry : props.entrySet ()) {
+            props2.put (entry.getKey (), this.pojoNode (entry.getValue ()));
+        }
+        ComplexObjectNode<PrimitiveNode> on = new ComplexObjectNode<PrimitiveNode> ();
+        on.addAll (props2);
         return on;
     }
 

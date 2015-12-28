@@ -71,12 +71,12 @@ public interface AccountDetails extends BankObject {
         Builder withState (String state);
         
         Builder withCountry (String country);
-        
+
         Builder initFromMap (Map<String, Object> inputAsMap) throws IllegalDetailsException;
         
         CustomerAccountDetails buildWithUnknownValues ();
         
         CustomerAccountDetails build (AccountDetailsRule accountDetailsRule) throws IllegalSwiftCodeException;
-        
+
     }
 }

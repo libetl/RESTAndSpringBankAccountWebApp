@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
@@ -21,7 +20,6 @@ public class ArrayNode extends ArrayList<Node> implements Node {
         return super.add (node);
     }
 
-    @XmlElementWrapper
     @XmlAnyElement
     public ArrayList<Node> getContent () {
         return this;
@@ -30,6 +28,11 @@ public class ArrayNode extends ArrayList<Node> implements Node {
     @Override
     public String asText () {
         return this.toString ();
+    }
+
+    @Override
+    public double asDouble () {
+               return 0;
     }
 
     public void setAll (List<Object> props) {

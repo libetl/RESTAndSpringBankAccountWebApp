@@ -53,6 +53,7 @@ public class LoggerConfigurer {
         
         this.addLevelRangeFilter (result, context, LevelAsEnum.WARN, LevelAsEnum.ERROR);
         this.setLayout (result, context, "%d{HH:mm:ss} %.-1level [%X{requestVerb} %X{requestPath}] - %msg%n %throwable{short}%n");
+        this.setLayout (result, context, "%d{HH:mm:ss} %.-1level [%X{requestVerb} %X{requestPath}] - %msg%n %throwable%n");
         result.start ();
         return result;
     }

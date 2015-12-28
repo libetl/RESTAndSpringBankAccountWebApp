@@ -1,5 +1,6 @@
 package org.toilelibre.libe.bank.actions.account.details;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -11,9 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.toilelibre.libe.bank.actions.LinkHelper;
 import org.toilelibre.libe.bank.actions.Response;
 import org.toilelibre.libe.bank.model.account.BankAccountException;
@@ -46,12 +44,13 @@ public class AccountDetailsResource {
     }
     
     @RequestMapping (method = RequestMethod.PUT, path = "/account/{iban}/details")
-    public Response<AccountDetails> setDetails (@PathVariable final String iban, @RequestBody final JsonNode input) throws BankAccountException {
+    public Response<AccountDetails> setDetails (@PathVariable final String iban, @RequestBody final Map<String, String> input) throws BankAccountException {
         AccountDetailsResource.LOGGER.info ("Setting the details of the account " + iban);
-        final ObjectMapper mapper = new ObjectMapper ();
-        @SuppressWarnings ("unchecked")
-        final Map<String, Object> inputAsMap = mapper.convertValue (input, Map.class);
-        final AccountDetails details = this.detailsBuilder.initFromMap (inputAsMap).build (this.accountDetailsRule);
+        Map<String, Object> map = new HashMap<String, Object> ();
+        for (String inputKey : input.keySet ()) {
+            map.put (inputKey, input.get (inputKey).toString ());
+        }
+        final AccountDetails details = this.detailsBuilder.initFromMap (map).build (this.accountDetailsRule);
         this.accountDetailsService.update (iban, details);
         return new Response<AccountDetails> (this.linkHelper.get (), this.accountDetailsService.view (iban));
     }

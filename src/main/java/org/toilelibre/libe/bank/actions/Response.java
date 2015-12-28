@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.toilelibre.libe.bank.actions.entity.ArrayNode;
 import org.toilelibre.libe.bank.actions.entity.ComplexObjectNode;
+import org.toilelibre.libe.bank.actions.entity.NodeFactory;
 import org.toilelibre.libe.bank.actions.entity.PrimitiveNode;
 import org.toilelibre.libe.bank.impl.account.balance.CustomerAccountBalance;
 import org.toilelibre.libe.bank.impl.account.details.CustomerAccountDetails;
@@ -20,9 +21,10 @@ public class Response<T> {
     @XmlElement (name="type")
     private String type;
     @XmlElement (name="content")
-    private T      content;
+    private Object   contentAsNode;
     @XmlElement (name="ok")
     private int    ok;
+    private T      content;
                      
     public Response (){
     }
@@ -31,6 +33,7 @@ public class Response<T> {
         this.self = self1;
         this.type = content1.getClass ().getSimpleName ();
         this.content = content1;
+        this.contentAsNode = NodeFactory.instance.pojoNode (content1);
         this.ok = 1;
     }
     

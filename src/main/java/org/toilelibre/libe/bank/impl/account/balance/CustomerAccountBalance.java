@@ -1,7 +1,5 @@
 package org.toilelibre.libe.bank.impl.account.balance;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import org.toilelibre.libe.bank.model.account.balance.AccountBalance;
 import org.toilelibre.libe.bank.model.account.balance.AccountBalanceRule;
 import org.toilelibre.libe.bank.model.account.balance.IllegalAddOperationException;
@@ -10,9 +8,7 @@ import org.toilelibre.libe.bank.model.account.balance.IllegalOverdraftValueExcep
 
 public class CustomerAccountBalance implements AccountBalance {
 
-    @XmlElement (name="balance")
     private double balance;
-    @XmlElement (name="overdraft")
     private double overdraft;
                    
     public CustomerAccountBalance () {

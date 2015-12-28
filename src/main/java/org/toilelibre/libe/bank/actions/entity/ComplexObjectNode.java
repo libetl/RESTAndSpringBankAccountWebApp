@@ -7,30 +7,32 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 @XmlRootElement(name = "resource")
 @XmlSeeAlso({PrimitiveNode.class, ArrayNode.class})
-public class ComplexObjectNode extends HashMap<String, Node> implements ObjectNode{
+public class ComplexObjectNode<T extends Node> extends HashMap<String, Node> implements ObjectNode<T> {
 
 
-    static class Pair<T1, T2> {
-        private final T1 key;
+    static class KeyValue<T2> {
+        private final String key;
         private final T2 value;
 
-        @XmlElement (name = "key")
-        public T1 getKey () {
+        @XmlAttribute (name = "key")
+        public String getKey () {
             return key;
         }
 
-        @XmlElement (name = "value")
+        @XmlAnyElement
         public T2 getValue () {
             return value;
         }
 
-        public Pair (T1 key1, T2 value1) {
+        public KeyValue (String key1, T2 value1) {
             this.key = key1;
             this.value = value1;
         }
@@ -53,10 +55,10 @@ public class ComplexObjectNode extends HashMap<String, Node> implements ObjectNo
 
 
     @XmlElement (name = "entry")
-    public List<Pair<String, Node>> getEntries () {
-        List<Pair<String, Node>> list = new LinkedList<Pair<String, Node>> ();
+    public List<KeyValue<Node>> getEntries () {
+        List<KeyValue<Node>> list = new LinkedList<KeyValue<Node>> ();
         for (Map.Entry<String, Node> entry : super.entrySet ()) {
-            list.add (new Pair<String, Node> (entry.getKey (), entry.getValue ()));
+            list.add (new KeyValue<Node> (entry.getKey (), entry.getValue ()));
         }
         return list;
     }
@@ -66,7 +68,7 @@ public class ComplexObjectNode extends HashMap<String, Node> implements ObjectNo
         return (Node) super.get (key);
     }
 
-    public Iterator<String> fieldNames () {
+    public Iterator<String> iterator () {
         return this.keySet ().iterator ();
     }
 
@@ -74,21 +76,27 @@ public class ComplexObjectNode extends HashMap<String, Node> implements ObjectNo
         return "";
     }
 
-    public ObjectNode set (String key, Node value) {
+    @Override
+    public double asDouble () {
+        return 0;
+    }
+
+    public ObjectNode<T> set (String key, T value) {
         super.put (key, value);
         return this;
     }
 
-    public ObjectNode put (String key, Serializable value) {
+    public ObjectNode<T> put (String key, Serializable value) {
         super.put (key, new PrimitiveNode (value));
         return this;
     }
 
-    public ObjectNode addAll (Map<String, Object> props) {
+    public ObjectNode<T> addAll (Map<String, Object> props) {
         for (Map.Entry<String, Object> entry : props.entrySet ()) {
             this.put (entry.getKey (), NodeFactory.instance.pojoNode (entry.getValue ()));
         }
         return this;
     }
+
 
 }
