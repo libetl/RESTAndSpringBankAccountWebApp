@@ -3,9 +3,6 @@ package org.toilelibre.libe.bank.actions.entity;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType
 public interface ObjectNode<T extends Node> extends Node, Iterable<String> {
 
 

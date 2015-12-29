@@ -3,12 +3,6 @@ package org.toilelibre.libe.bank.actions.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-
-@XmlRootElement(name = "array")
-@XmlSeeAlso({PrimitiveNode.class, ComplexObjectNode.class})
 public class ArrayNode extends ArrayList<Node> implements Node {
 
     /**
@@ -20,7 +14,6 @@ public class ArrayNode extends ArrayList<Node> implements Node {
         return super.add (node);
     }
 
-    @XmlAnyElement
     public ArrayList<Node> getContent () {
         return this;
     }

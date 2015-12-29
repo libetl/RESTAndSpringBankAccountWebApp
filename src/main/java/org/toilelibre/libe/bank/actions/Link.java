@@ -1,19 +1,12 @@
 package org.toilelibre.libe.bank.actions;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-
 import org.springframework.web.bind.annotation.RequestMethod;
 
 public class Link {
 
-    @XmlAttribute
     private final String           rel;
-    @XmlAttribute
     private final String           href;
-    @XmlElement (name="methods")
     private final RequestMethod [] methods;
-    @XmlElement (name="params")
     private final String []        params;
                                    
     public Link (final String rel1, final String href1, RequestMethod [] methods1, String [] params) {

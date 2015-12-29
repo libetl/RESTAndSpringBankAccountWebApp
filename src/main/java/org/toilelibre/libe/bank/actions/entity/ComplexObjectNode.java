@@ -7,14 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-
-@XmlRootElement(name = "resource")
-@XmlSeeAlso({PrimitiveNode.class, ArrayNode.class})
 public class ComplexObjectNode<T extends Node> extends HashMap<String, Node> implements ObjectNode<T> {
 
 
@@ -22,12 +14,10 @@ public class ComplexObjectNode<T extends Node> extends HashMap<String, Node> imp
         private final String key;
         private final T2 value;
 
-        @XmlAttribute (name = "key")
         public String getKey () {
             return key;
         }
 
-        @XmlAnyElement
         public T2 getValue () {
             return value;
         }
@@ -54,7 +44,6 @@ public class ComplexObjectNode<T extends Node> extends HashMap<String, Node> imp
     }
 
 
-    @XmlElement (name = "entry")
     public List<KeyValue<Node>> getEntries () {
         List<KeyValue<Node>> list = new LinkedList<KeyValue<Node>> ();
         for (Map.Entry<String, Node> entry : super.entrySet ()) {

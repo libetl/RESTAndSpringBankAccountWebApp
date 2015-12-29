@@ -2,8 +2,6 @@ package org.toilelibre.libe.bank.impl.account.details;
 
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import org.toilelibre.libe.bank.model.account.details.AccountDetailsContact;
 
 public class PersonAccountDetailsContact implements AccountDetailsContact {
@@ -12,11 +10,8 @@ public class PersonAccountDetailsContact implements AccountDetailsContact {
         MR, MS, DR, PROF, UN;
     }
 
-    @XmlElement (name="title")
     private final Title  title;
-    @XmlElement (name="firstName")
     private final String firstName;
-    @XmlElement (name="lastName")
     private final String lastName;
                          
     public PersonAccountDetailsContact (final Title title1, final String firstName1, final String lastName1) {
