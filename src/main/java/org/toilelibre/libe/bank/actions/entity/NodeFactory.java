@@ -45,17 +45,21 @@ public class NodeFactory {
         return on;
     }
     private Node nodeAsMap (Object object) {
+        Map<String, Object> props2 = this.transformChildrenProps (object);
+        ComplexObjectNode<PrimitiveNode> on = new ComplexObjectNode<PrimitiveNode> ();
+        on.addAll (props2);
+        return on;
+    }
+
+    private Map<String, Object> transformChildrenProps (Object object) {
         ObjectMapper om = new ObjectMapper ();
-        System.out.println (object + " ..." + object.getClass ().getSimpleName ());
         @SuppressWarnings ("unchecked")
         Map<String,Object> props = om.convertValue (object, Map.class);
         Map<String,Object> props2 = new HashMap<String, Object> ();
         for (Map.Entry<String, Object> entry : props.entrySet ()) {
             props2.put (entry.getKey (), this.pojoNode (entry.getValue ()));
         }
-        ComplexObjectNode<PrimitiveNode> on = new ComplexObjectNode<PrimitiveNode> ();
-        on.addAll (props2);
-        return on;
+        return props2;
     }
 
 }

@@ -5,14 +5,12 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.toilelibre.libe.bank.actions.LinkHelper;
 import org.toilelibre.libe.bank.actions.Response;
-import org.toilelibre.libe.bank.actions.entity.ComplexObjectNode;
-import org.toilelibre.libe.bank.actions.entity.PrimitiveNode;
+import org.toilelibre.libe.bank.ioc.webapp.argresolver.RequestBodyPath;
 import org.toilelibre.libe.bank.model.account.BankAccountException;
 import org.toilelibre.libe.bank.model.account.NoSuchAccountException;
 import org.toilelibre.libe.bank.model.account.balance.AccountBalance;
@@ -40,9 +38,8 @@ public class AccountBalanceResource {
     }
     
     @RequestMapping (method = RequestMethod.PUT, path = "/account/{iban}/overdraft")
-    public Response<AccountBalance> setOverdraft (@PathVariable final String iban, @RequestBody final ComplexObjectNode<PrimitiveNode> input) throws BankAccountException {
+    public Response<AccountBalance> setOverdraft (@PathVariable final String iban, @RequestBodyPath ("amount") final double amount) throws BankAccountException {
         AccountBalanceResource.LOGGER.info ("Setting a new overdraft for account " + iban);
-        final double amount = input.get ("amount").asDouble ();
         return new Response<AccountBalance> (this.linkHelper.get (), this.accountBalanceService.setOverdraft (iban, amount, this.accountBalanceRule));
     }
 }

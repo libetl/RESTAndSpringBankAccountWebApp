@@ -1,18 +1,16 @@
 package org.toilelibre.libe.bank.actions.account.operation;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.toilelibre.libe.bank.actions.LinkHelper;
 import org.toilelibre.libe.bank.actions.Response;
+import org.toilelibre.libe.bank.ioc.webapp.argresolver.RequestBodyPath;
 import org.toilelibre.libe.bank.model.account.BankAccountException;
 import org.toilelibre.libe.bank.model.account.balance.AccountBalanceRule;
 import org.toilelibre.libe.bank.model.account.history.AccountHistoryOperation;
@@ -37,26 +35,22 @@ public class AccountOperationResource {
     private LinkHelper                  linkHelper;
                                         
     @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}/deposit")
-    public Response<AccountHistoryOperation> deposit (@PathVariable final String iban, @RequestBody final Map<String, String> input) throws BankAccountException {
+    public Response<AccountHistoryOperation> deposit (@PathVariable final String iban, @RequestBodyPath ("amount") final double amount) throws BankAccountException {
         AccountOperationResource.LOGGER.info ("Deposit on account " + iban);
-        final double amount = Double.parseDouble (input.get ("amount"));
         return new Response<AccountHistoryOperation> (this.linkHelper.get (),
                 this.accountOperationService.deposit (iban, amount, this.accountBalanceRule, this.accountHistoryOperationRule));
     }
     
     @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}/withdraw")
-    public Response<AccountHistoryOperation> withdraw (@PathVariable final String iban, @RequestBody final Map<String, String> input) throws BankAccountException {
+    public Response<AccountHistoryOperation> withdraw (@PathVariable final String iban, @RequestBodyPath ("amount") final double amount) throws BankAccountException {
         AccountOperationResource.LOGGER.info ("Withdraw on account " + iban);
-        final double amount = Double.parseDouble (input.get ("amount"));
         return new Response<AccountHistoryOperation> (this.linkHelper.get (),
                 this.accountOperationService.withdraw (iban, amount, this.accountBalanceRule, this.accountHistoryOperationRule));
     }
     
     @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}/transfer")
-    public Response<AccountHistoryOperation> transfer (@PathVariable final String iban, @RequestBody final Map<String, String> input) throws BankAccountException {
+    public Response<AccountHistoryOperation> transfer (@PathVariable final String iban, @RequestBodyPath ("amount") final double amount, @RequestBodyPath ("recipient") final String recipient) throws BankAccountException {
         AccountOperationResource.LOGGER.info ("Transfer on account " + iban);
-        final double amount = Double.parseDouble (input.get ("amount"));
-        final String recipient = input.get ("recipient").toString ();
         return new Response<AccountHistoryOperation> (this.linkHelper.get (),
                 this.accountOperationService.transfer (iban, amount, recipient, this.accountBalanceRule, this.accountHistoryOperationRule));
     }

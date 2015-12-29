@@ -14,12 +14,10 @@ public class WebAppContentNegociationConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureContentNegotiation (ContentNegotiationConfigurer configurer) {
         configurer.favorPathExtension (true)
-                  .favorParameter (true)
-                  .parameterName ("t")
+                  .favorParameter (false)
                   .ignoreAcceptHeader (false)
                   .useJaf (false)
                   .defaultContentTypeStrategy (new HeaderContentNegotiationStrategy ())
                   .defaultContentType (MediaType.APPLICATION_JSON);
     }
-
 }

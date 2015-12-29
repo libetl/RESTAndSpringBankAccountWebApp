@@ -12,7 +12,6 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
 import org.toilelibre.libe.bank.ioc.logs.LogbackConfigListener;
 
 /**
@@ -39,7 +38,8 @@ public class WebAppInitializer implements WebApplicationInitializer {
     private AnnotationConfigWebApplicationContext getContext () {
         final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext ();
         context.setConfigLocations (WebAppConfig.class.getName (),
-                WebAppContentNegociationConfig.class.getName ());
+                WebAppContentNegociationConfig.class.getName (),
+                WebMvcConfigurationSupportWithCustomArgumentResolvers.class.getName ());
         return context;
     }
     

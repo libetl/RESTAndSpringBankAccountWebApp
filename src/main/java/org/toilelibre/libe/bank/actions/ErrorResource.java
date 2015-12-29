@@ -2,6 +2,7 @@ package org.toilelibre.libe.bank.actions;
 
 import java.util.UUID;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,12 +29,21 @@ import org.toilelibre.libe.bank.model.account.error.ErrorCode.Kind;
 public class ErrorResource {
     private static Logger LOGGER = LoggerFactory.getLogger (ErrorResource.class);
     
+
+    @RequestMapping (path = "badRequest")
+    @ExceptionHandler (ServletException.class)
+    @ResponseStatus (code = HttpStatus.BAD_REQUEST)
+    public ObjectNode<Node> badRequest (final ServletException exception) {
+        final NodeFactory factory = NodeFactory.instance;
+        return (ObjectNode<Node>) factory.objectNode ().put ("ok", 0).put ("name", "BadRequest").put ("description", exception.getMessage ()).put ("kind", Kind.BAD_INPUT.name ());
+    }
+    
     @RequestMapping (path = "notFound")
     @ExceptionHandler (NoHandlerFoundException.class)
     @ResponseStatus (code = HttpStatus.NOT_FOUND)
     public ObjectNode<Node> notFound () {
         final NodeFactory factory = NodeFactory.instance;
-        return (ObjectNode<Node>) factory.objectNode ().put ("ok", 0).put ("name", "APINotFound").put ("description", "This API does not exist").put ("kind", Kind.BAD_INPUT.name ());
+        return (ObjectNode<Node>) factory.objectNode ().put ("ok", 0).put ("name", "APINotFound").put ("description", "This API does not exist").put ("kind", Kind.NOT_FOUND.name ());
     }
     
     @RequestMapping (path = "badMethod")
