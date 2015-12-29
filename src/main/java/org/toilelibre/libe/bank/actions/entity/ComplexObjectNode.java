@@ -3,31 +3,10 @@ package org.toilelibre.libe.bank.actions.entity;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class ComplexObjectNode<T extends Node> extends HashMap<String, Node> implements ObjectNode<T> {
 
-
-    static class KeyValue<T2> {
-        private final String key;
-        private final T2 value;
-
-        public String getKey () {
-            return key;
-        }
-
-        public T2 getValue () {
-            return value;
-        }
-
-        public KeyValue (String key1, T2 value1) {
-            this.key = key1;
-            this.value = value1;
-        }
-    }
-    
     /**
      * 
      */
@@ -41,17 +20,7 @@ public class ComplexObjectNode<T extends Node> extends HashMap<String, Node> imp
 
     public ComplexObjectNode () {
         super ();
-    }
-
-
-    public List<KeyValue<Node>> getEntries () {
-        List<KeyValue<Node>> list = new LinkedList<KeyValue<Node>> ();
-        for (Map.Entry<String, Node> entry : super.entrySet ()) {
-            list.add (new KeyValue<Node> (entry.getKey (), entry.getValue ()));
-        }
-        return list;
-    }
-    
+    }    
     
     public Node get (String key) {
         return (Node) super.get (key);

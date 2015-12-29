@@ -1,10 +1,13 @@
 package org.toilelibre.libe.bank.actions;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+
 public class Response<T> {
     
     private Link   self;
     private String type;
     private int    ok;
+    @JacksonXmlElementWrapper
     private T      content;
                      
     public Response (){

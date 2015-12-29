@@ -2,11 +2,18 @@ package org.toilelibre.libe.bank.actions;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
 public class Link {
 
+    @JacksonXmlProperty(namespace="xsi",isAttribute=true)
     private final String           rel;
+    @JacksonXmlElementWrapper(useWrapping=false)
     private final String           href;
+    @JacksonXmlElementWrapper(useWrapping=false)
     private final RequestMethod [] methods;
+    @JacksonXmlElementWrapper(useWrapping=false)
     private final String []        params;
                                    
     public Link (final String rel1, final String href1, RequestMethod [] methods1, String [] params) {
