@@ -9,6 +9,7 @@ import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.toilelibre.libe.bank.ioc.webapp.html.HtmlMessageConverter;
 import org.toilelibre.libe.bank.ioc.webapp.yaml.YamlMessageConverter;
 
 @Configuration
@@ -24,6 +25,7 @@ public class WebAppContentNegociationConfig extends WebMvcConfigurerAdapter {
     @Override
     public void extendMessageConverters (final List<HttpMessageConverter<?>> converters) {
         converters.add (new YamlMessageConverter ());
+        converters.add (new HtmlMessageConverter ());
         super.extendMessageConverters (converters);
     }
 
