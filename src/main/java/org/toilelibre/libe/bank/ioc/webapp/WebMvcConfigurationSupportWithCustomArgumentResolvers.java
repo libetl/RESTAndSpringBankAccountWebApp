@@ -18,31 +18,32 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @Configuration
 public class WebMvcConfigurationSupportWithCustomArgumentResolvers extends WebMvcConfigurationSupport {
 
+    @Override
     @Bean
-    public RequestMappingHandlerAdapter requestMappingHandlerAdapter() {
-        List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>();
-        addArgumentResolvers(argumentResolvers);
+    public RequestMappingHandlerAdapter requestMappingHandlerAdapter () {
+        final List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver> ();
+        this.addArgumentResolvers (argumentResolvers);
 
-        List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<HandlerMethodReturnValueHandler>();
-        addReturnValueHandlers(returnValueHandlers);
+        final List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<HandlerMethodReturnValueHandler> ();
+        this.addReturnValueHandlers (returnValueHandlers);
 
-        RequestMappingHandlerAdapter adapter = new RequestMappingHandlerAdapterWithRequestBodyPathResolver();
-        adapter.setContentNegotiationManager(mvcContentNegotiationManager());
-        adapter.setMessageConverters(getMessageConverters());
-        adapter.setWebBindingInitializer(getConfigurableWebBindingInitializer());
-        adapter.setCustomArgumentResolvers(argumentResolvers);
-        adapter.setCustomReturnValueHandlers(returnValueHandlers);
+        final RequestMappingHandlerAdapter adapter = new RequestMappingHandlerAdapterWithRequestBodyPathResolver ();
+        adapter.setContentNegotiationManager (this.mvcContentNegotiationManager ());
+        adapter.setMessageConverters (this.getMessageConverters ());
+        adapter.setWebBindingInitializer (this.getConfigurableWebBindingInitializer ());
+        adapter.setCustomArgumentResolvers (argumentResolvers);
+        adapter.setCustomReturnValueHandlers (returnValueHandlers);
 
-        List<RequestBodyAdvice> requestBodyAdvices = new ArrayList<RequestBodyAdvice>();
-        requestBodyAdvices.add(new JsonViewRequestBodyAdvice());
-        adapter.setRequestBodyAdvice(requestBodyAdvices);
+        final List<RequestBodyAdvice> requestBodyAdvices = new ArrayList<RequestBodyAdvice> ();
+        requestBodyAdvices.add (new JsonViewRequestBodyAdvice ());
+        adapter.setRequestBodyAdvice (requestBodyAdvices);
 
-        List<ResponseBodyAdvice<?>> responseBodyAdvices = new ArrayList<ResponseBodyAdvice<?>>();
-        responseBodyAdvices.add(new JsonViewResponseBodyAdvice());
-        adapter.setResponseBodyAdvice(responseBodyAdvices);
+        final List<ResponseBodyAdvice<?>> responseBodyAdvices = new ArrayList<ResponseBodyAdvice<?>> ();
+        responseBodyAdvices.add (new JsonViewResponseBodyAdvice ());
+        adapter.setResponseBodyAdvice (responseBodyAdvices);
 
-        AsyncSupportConfigurer configurer = new AsyncSupportConfigurer();
-        configureAsyncSupport(configurer);
+        final AsyncSupportConfigurer configurer = new AsyncSupportConfigurer ();
+        this.configureAsyncSupport (configurer);
 
         return adapter;
     }

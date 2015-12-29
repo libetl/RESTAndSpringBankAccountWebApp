@@ -3,37 +3,37 @@ package org.toilelibre.libe.bank.actions.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayNode extends ArrayList<Node> implements Node {
+public class ArrayNode extends ArrayList<Node>implements Node {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2436235972384989497L;
 
-    public boolean add (Node node) {
+    @Override
+    public boolean add (final Node node) {
         return super.add (node);
     }
 
-    public ArrayList<Node> getContent () {
-        return this;
+    @Override
+    public double asDouble () {
+        return 0;
     }
-    
+
     @Override
     public String asText () {
         return this.toString ();
     }
 
-    @Override
-    public double asDouble () {
-               return 0;
+    public ArrayList<Node> getContent () {
+        return this;
     }
 
-    public void setAll (List<Object> props) {
-        for (Object prop : props) {
+    public void setAll (final List<Object> props) {
+        for (final Object prop : props) {
             this.add (NodeFactory.instance.pojoNode (prop));
         }
-        
-    }
 
+    }
 
 }

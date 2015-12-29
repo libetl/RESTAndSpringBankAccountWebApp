@@ -8,35 +8,25 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-
 public class PrimitiveNode implements Node {
 
     public static class PrimitiveNodeWriter extends JsonSerializer<PrimitiveNode> {
 
         @Override
-        public void serialize (PrimitiveNode value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
-            if (value.value instanceof Number || value.value instanceof Boolean) {
+        public void serialize (final PrimitiveNode value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException, JsonProcessingException {
+            if ( (value.value instanceof Number) || (value.value instanceof Boolean)) {
                 gen.writeRaw (value.asText ());
-            }else {
+            } else {
                 gen.writeString (value.asText ());
             }
         }
-        
-    }
-    
-    private Serializable value;
 
-    public PrimitiveNode () {
     }
-    
-    public PrimitiveNode (Serializable value1) {
+
+    private final Serializable value;
+
+    public PrimitiveNode (final Serializable value1) {
         this.value = value1;
-    }
-
-
-    @Override
-    public String asText () {
-        return this.value.toString ();
     }
 
     @Override
@@ -44,8 +34,18 @@ public class PrimitiveNode implements Node {
         return Double.parseDouble (this.value.toString ());
     }
 
+    @Override
+    public String asText () {
+        return this.value.toString ();
+    }
+
     public String getString () {
         return this.value.toString ();
     }
-    
+
+    @Override
+    public String toString () {
+        return this.value == null ? "" : this.value.toString ();
+    }
+
 }

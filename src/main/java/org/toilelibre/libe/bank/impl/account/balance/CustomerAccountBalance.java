@@ -10,12 +10,12 @@ public class CustomerAccountBalance implements AccountBalance {
 
     private double balance;
     private double overdraft;
-                   
+
     public CustomerAccountBalance () {
         this.balance = 0;
         this.overdraft = 0;
     }
-    
+
     @Override
     public void add (final Double addedAmount, final AccountBalanceRule rule) throws IllegalAddOperationException {
         if (!rule.canAddThisAmount (addedAmount)) {
@@ -23,34 +23,7 @@ public class CustomerAccountBalance implements AccountBalance {
         }
         this.balance += addedAmount;
     }
-    
-    @Override
-    public Double getBalance () {
-        return this.balance;
-    }
-    
-    @Override
-    public Double getOverdraft () {
-        return this.overdraft;
-    }
-    
-    @Override
-    public Double withdrawAndReportBalance (final Double withdrawnAmount, final AccountBalanceRule rule) throws IllegalBalanceException {
-        if (!rule.withdrawPermitted (this.balance - withdrawnAmount, this.overdraft)) {
-            throw new IllegalBalanceException (this.balance - withdrawnAmount);
-        }
-        this.balance -= withdrawnAmount;
-        return this.balance;
-    }
-    
-    @Override
-    public void setOverdraft (final Double overdraft1, final AccountBalanceRule rule) throws IllegalOverdraftValueException {
-        if (!rule.canSetThisOverdraft (this.balance, overdraft1)) {
-            throw new IllegalOverdraftValueException (overdraft1);
-        }
-        this.overdraft = overdraft1;
-    }
-    
+
     /**
      * AccountBalance is an entity
      *
@@ -64,5 +37,32 @@ public class CustomerAccountBalance implements AccountBalance {
         result.balance = this.balance;
         result.overdraft = this.overdraft;
         return result;
+    }
+
+    @Override
+    public Double getBalance () {
+        return this.balance;
+    }
+
+    @Override
+    public Double getOverdraft () {
+        return this.overdraft;
+    }
+
+    @Override
+    public void setOverdraft (final Double overdraft1, final AccountBalanceRule rule) throws IllegalOverdraftValueException {
+        if (!rule.canSetThisOverdraft (this.balance, overdraft1)) {
+            throw new IllegalOverdraftValueException (overdraft1);
+        }
+        this.overdraft = overdraft1;
+    }
+
+    @Override
+    public Double withdrawAndReportBalance (final Double withdrawnAmount, final AccountBalanceRule rule) throws IllegalBalanceException {
+        if (!rule.withdrawPermitted (this.balance - withdrawnAmount, this.overdraft)) {
+            throw new IllegalBalanceException (this.balance - withdrawnAmount);
+        }
+        this.balance -= withdrawnAmount;
+        return this.balance;
     }
 }

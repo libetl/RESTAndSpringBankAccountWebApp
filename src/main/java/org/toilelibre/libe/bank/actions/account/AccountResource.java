@@ -22,21 +22,35 @@ import org.toilelibre.libe.bank.model.account.NoSuchAccountException;
 
 @RestController
 public class AccountResource {
-    
-    private static Logger        LOGGER = LoggerFactory.getLogger (AccountResource.class);
-                                        
+
+    private static Logger LOGGER = LoggerFactory.getLogger (AccountResource.class);
+
     @Inject
-    private FindAccountService   findAccountService;
-                                 
+    private FindAccountService findAccountService;
+
     @Inject
     private CreateAccountService updateOrCreateAccountService;
-                                 
+
     @Inject
-    private AccountRule          accountRule;
-                                 
+    private AccountRule accountRule;
+
     @Inject
-    private LinkHelper           linkHelper;
-                                 
+    private LinkHelper linkHelper;
+
+    @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}")
+    public Response<String> create (@PathVariable final String iban) throws BankAccountException {
+        this.updateOrCreateAccountService.create (iban, this.accountRule);
+        AccountResource.LOGGER.info ("New Account created " + iban);
+        return new Response<String> (this.linkHelper.get (), iban);
+    }
+
+    @RequestMapping (method = RequestMethod.GET, path = "/account/{iban}")
+    public Response<ObjectNode<Node>> getOneAccount (@PathVariable final String iban) throws NoSuchAccountException {
+        AccountResource.LOGGER.info ("Trying to find account number " + iban);
+        final NodeFactory factory = NodeFactory.instance;
+        return new Response<ObjectNode<Node>> (this.linkHelper.get (), this.linkHelper.surroundWithLinks (factory.objectNode ().put ("iban", this.findAccountService.find (iban))));
+    }
+
     @RequestMapping (method = RequestMethod.GET, path = "/account")
     public Response<ArrayNode> list () {
         final NodeFactory factory = NodeFactory.instance;
@@ -45,21 +59,7 @@ public class AccountResource {
         for (final String iban : this.findAccountService.findAll ()) {
             results.add (this.linkHelper.surroundWithLinks (factory.objectNode ().put ("iban", iban)));
         }
-        
+
         return new Response<ArrayNode> (this.linkHelper.get (), results);
-    }
-    
-    @RequestMapping (method = RequestMethod.GET, path = "/account/{iban}")
-    public Response<ObjectNode<Node>> getOneAccount (@PathVariable final String iban) throws NoSuchAccountException {
-        AccountResource.LOGGER.info ("Trying to find account number " + iban);
-        final NodeFactory factory = NodeFactory.instance;
-        return new Response<ObjectNode<Node>> (this.linkHelper.get (), this.linkHelper.surroundWithLinks (factory.objectNode ().put ("iban", this.findAccountService.find (iban))));
-    }
-    
-    @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}")
-    public Response<String> create (@PathVariable final String iban) throws BankAccountException {
-        this.updateOrCreateAccountService.create (iban, this.accountRule);
-        AccountResource.LOGGER.info ("New Account created " + iban);
-        return new Response<String> (this.linkHelper.get (), iban);
     }
 }

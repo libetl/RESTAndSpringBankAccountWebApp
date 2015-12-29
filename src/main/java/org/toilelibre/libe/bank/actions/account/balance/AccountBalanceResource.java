@@ -19,24 +19,24 @@ import org.toilelibre.libe.bank.model.account.balance.AccountBalanceService;
 
 @RestController
 public class AccountBalanceResource {
-    
-    private static Logger         LOGGER = LoggerFactory.getLogger (AccountBalanceResource.class);
-                                         
+
+    private static Logger LOGGER = LoggerFactory.getLogger (AccountBalanceResource.class);
+
     @Inject
     private AccountBalanceService accountBalanceService;
-                                  
+
     @Inject
-    private AccountBalanceRule    accountBalanceRule;
-                                  
+    private AccountBalanceRule accountBalanceRule;
+
     @Inject
-    private LinkHelper            linkHelper;
-                                  
+    private LinkHelper linkHelper;
+
     @RequestMapping (method = RequestMethod.GET, path = "/account/{iban}/balance")
     public Response<AccountBalance> getBalance (@PathVariable final String iban) throws NoSuchAccountException {
         AccountBalanceResource.LOGGER.info ("Trying to find account balance of account " + iban);
         return new Response<AccountBalance> (this.linkHelper.get (), this.accountBalanceService.get (iban));
     }
-    
+
     @RequestMapping (method = RequestMethod.PUT, path = "/account/{iban}/overdraft")
     public Response<AccountBalance> setOverdraft (@PathVariable final String iban, @RequestBodyPath ("amount") final double amount) throws BankAccountException {
         AccountBalanceResource.LOGGER.info ("Setting a new overdraft for account " + iban);

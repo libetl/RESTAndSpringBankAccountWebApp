@@ -19,39 +19,40 @@ import org.toilelibre.libe.bank.model.account.operation.AccountOperationService;
 
 @RestController
 public class AccountOperationResource {
-    
-    private static Logger               LOGGER = LoggerFactory.getLogger (AccountOperationResource.class);
-                                               
+
+    private static Logger LOGGER = LoggerFactory.getLogger (AccountOperationResource.class);
+
     @Inject
-    private AccountOperationService     accountOperationService;
-                                        
+    private AccountOperationService accountOperationService;
+
     @Inject
-    private AccountBalanceRule          accountBalanceRule;
-                                        
+    private AccountBalanceRule accountBalanceRule;
+
     @Inject
     private AccountHistoryOperationRule accountHistoryOperationRule;
-                                        
+
     @Inject
-    private LinkHelper                  linkHelper;
-                                        
+    private LinkHelper linkHelper;
+
     @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}/deposit")
     public Response<AccountHistoryOperation> deposit (@PathVariable final String iban, @RequestBodyPath ("amount") final double amount) throws BankAccountException {
         AccountOperationResource.LOGGER.info ("Deposit on account " + iban);
         return new Response<AccountHistoryOperation> (this.linkHelper.get (),
                 this.accountOperationService.deposit (iban, amount, this.accountBalanceRule, this.accountHistoryOperationRule));
     }
-    
+
+    @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}/transfer")
+    public Response<AccountHistoryOperation> transfer (@PathVariable final String iban, @RequestBodyPath ("amount") final double amount,
+            @RequestBodyPath ("recipient") final String recipient) throws BankAccountException {
+        AccountOperationResource.LOGGER.info ("Transfer on account " + iban);
+        return new Response<AccountHistoryOperation> (this.linkHelper.get (),
+                this.accountOperationService.transfer (iban, amount, recipient, this.accountBalanceRule, this.accountHistoryOperationRule));
+    }
+
     @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}/withdraw")
     public Response<AccountHistoryOperation> withdraw (@PathVariable final String iban, @RequestBodyPath ("amount") final double amount) throws BankAccountException {
         AccountOperationResource.LOGGER.info ("Withdraw on account " + iban);
         return new Response<AccountHistoryOperation> (this.linkHelper.get (),
                 this.accountOperationService.withdraw (iban, amount, this.accountBalanceRule, this.accountHistoryOperationRule));
-    }
-    
-    @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}/transfer")
-    public Response<AccountHistoryOperation> transfer (@PathVariable final String iban, @RequestBodyPath ("amount") final double amount, @RequestBodyPath ("recipient") final String recipient) throws BankAccountException {
-        AccountOperationResource.LOGGER.info ("Transfer on account " + iban);
-        return new Response<AccountHistoryOperation> (this.linkHelper.get (),
-                this.accountOperationService.transfer (iban, amount, recipient, this.accountBalanceRule, this.accountHistoryOperationRule));
     }
 }

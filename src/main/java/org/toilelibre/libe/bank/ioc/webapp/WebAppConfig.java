@@ -10,12 +10,12 @@ import org.toilelibre.libe.bank.ioc.InMemoryAccountsAppConfig;
 @EnableWebMvc
 @ComponentScan (basePackages = "org.toilelibre.libe.bank")
 public class WebAppConfig extends InMemoryAccountsAppConfig {
-    
+
     @Bean
     public LinkHelper linkHelper () {
         return new LinkHelper ();
     }
-    
+
     @Bean
     public LinkLister linkLister () {
         return new LinkLister ();

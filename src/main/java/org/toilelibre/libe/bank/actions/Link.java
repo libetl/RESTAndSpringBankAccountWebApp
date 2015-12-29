@@ -7,42 +7,42 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class Link {
 
-    @JacksonXmlProperty(namespace="xsi",isAttribute=true)
+    @JacksonXmlProperty (namespace = "xsi", isAttribute = true)
     private final String           rel;
-    @JacksonXmlElementWrapper(useWrapping=false)
+    @JacksonXmlElementWrapper (useWrapping = false)
     private final String           href;
-    @JacksonXmlElementWrapper(useWrapping=false)
+    @JacksonXmlElementWrapper (useWrapping = false)
     private final RequestMethod [] methods;
-    @JacksonXmlElementWrapper(useWrapping=false)
+    @JacksonXmlElementWrapper (useWrapping = false)
     private final String []        params;
-                                   
-    public Link (final String rel1, final String href1, RequestMethod [] methods1, String [] params) {
+
+    public Link (final String rel1, final String href1, final RequestMethod [] methods1, final String [] params) {
         this.rel = rel1;
         this.href = href1;
         this.methods = methods1;
         this.params = params;
     }
-    
-    public String getRel () {
-        return this.rel;
-    }
-    
+
     public String getHref () {
         return this.href;
     }
-    
+
     public RequestMethod [] getMethods () {
-        return methods.clone ();
+        return this.methods.clone ();
     }
-    
+
     public String [] getParams () {
-        return params;
+        return this.params;
     }
-    
+
+    public String getRel () {
+        return this.rel;
+    }
+
     @Override
     public String toString () {
-        StringBuffer stringBuffer = new StringBuffer ();
-        for (RequestMethod method : this.methods) {
+        final StringBuffer stringBuffer = new StringBuffer ();
+        for (final RequestMethod method : this.methods) {
             if (stringBuffer.length () > 0) {
                 stringBuffer.append ('\n');
             }

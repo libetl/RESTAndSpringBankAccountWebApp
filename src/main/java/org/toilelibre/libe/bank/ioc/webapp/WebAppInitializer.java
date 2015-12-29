@@ -19,6 +19,13 @@ import org.toilelibre.libe.bank.ioc.logs.LogbackConfigListener;
  *
  */
 public class WebAppInitializer implements WebApplicationInitializer {
+    private AnnotationConfigWebApplicationContext getContext () {
+        final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext ();
+        context.setConfigLocations (WebAppConfig.class.getName (), WebAppContentNegociationConfig.class.getName (),
+                WebMvcConfigurationSupportWithCustomArgumentResolvers.class.getName ());
+        return context;
+    }
+
     @Override
     public void onStartup (final ServletContext servletContext) throws ServletException {
         final WebApplicationContext context = this.getContext ();
@@ -28,19 +35,11 @@ public class WebAppInitializer implements WebApplicationInitializer {
         servletContext.addFilter (MDCFilter.class.getSimpleName (), MDCFilter.class).addMappingForUrlPatterns (EnumSet.of (DispatcherType.REQUEST, DispatcherType.ERROR), true,
                 "/*");
     }
-    
+
     private void setServletOptions (final Dynamic dispatcher) {
         dispatcher.setLoadOnStartup (1);
         dispatcher.setInitParameter ("throwExceptionIfNoHandlerFound", "true");
         dispatcher.addMapping ("/api/*");
     }
-    
-    private AnnotationConfigWebApplicationContext getContext () {
-        final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext ();
-        context.setConfigLocations (WebAppConfig.class.getName (),
-                WebAppContentNegociationConfig.class.getName (),
-                WebMvcConfigurationSupportWithCustomArgumentResolvers.class.getName ());
-        return context;
-    }
-    
+
 }

@@ -16,43 +16,24 @@ import org.toilelibre.libe.bank.actions.entity.NodeFactory;
 import org.toilelibre.libe.bank.actions.entity.ObjectNode;
 
 public class LinkHelper {
-    
+
     @Inject
-    LinkLister                 linkLister;
-                               
+    LinkLister linkLister;
+
     @Inject
     private HttpServletRequest httpServletRequest;
-                               
-    public Link get () {
-        return this.get (Thread.currentThread ().getStackTrace () [2]);
-    }
-    
-    public Link get (StackTraceElement stackTraceElement) {
-        Method method = null;
-        try {
-            method = this.findMethod (stackTraceElement);
-        } catch (ClassNotFoundException e) {
-            throw new RestClientException ("API method not found", e);
-        }
-        if (method == null) {
-            throw new RestClientException ("API method not found");
-        }
-        return new Link (this.linkLister.stackTraceElementToFriendlyName (stackTraceElement), this.httpServletRequest.getRequestURL ().toString (),
-                new RequestMethod [] { RequestMethod.valueOf (this.httpServletRequest.getMethod ()) },
-                this.linkLister.filterNotPayloadParameters (method, method.getParameterTypes ()));
-    }
-    
-    private Method findMethod (StackTraceElement stackTraceElement) throws ClassNotFoundException {
-        Class<?> clazz = Class.forName (stackTraceElement.getClassName ());
-        Method [] methods = clazz.getMethods ();
-        for (Method method : methods) {
+
+    private Method findMethod (final StackTraceElement stackTraceElement) throws ClassNotFoundException {
+        final Class<?> clazz = Class.forName (stackTraceElement.getClassName ());
+        final Method [] methods = clazz.getMethods ();
+        for (final Method method : methods) {
             if (method.getName ().equals (stackTraceElement.getMethodName ())) {
                 return method;
             }
         }
         return null;
     }
-    
+
     private <T extends Node> String findPossibleReplacements (final ObjectNode<T> node, String href) {
         final Iterator<String> fieldNames = node.iterator ();
         while (fieldNames.hasNext ()) {
@@ -63,10 +44,48 @@ public class LinkHelper {
         }
         return href;
     }
-    
-    public ObjectNode<Node> surroundWithLinks (ObjectNode<Node> objectNode) {
-        Link currentLink = this.get (Thread.currentThread ().getStackTrace () [2]);
-        Link currentGenericLink = this.getGenericLink (currentLink);
+
+    public Link get () {
+        return this.get (Thread.currentThread ().getStackTrace () [2]);
+    }
+
+    public Link get (final StackTraceElement stackTraceElement) {
+        Method method = null;
+        try {
+            method = this.findMethod (stackTraceElement);
+        } catch (final ClassNotFoundException e) {
+            throw new RestClientException ("API method not found", e);
+        }
+        if (method == null) {
+            throw new RestClientException ("API method not found");
+        }
+        return new Link (this.linkLister.stackTraceElementToFriendlyName (stackTraceElement), this.httpServletRequest.getRequestURL ().toString (),
+                new RequestMethod [] { RequestMethod.valueOf (this.httpServletRequest.getMethod ()) },
+                this.linkLister.filterNotPayloadParameters (method, method.getParameterTypes ()));
+    }
+
+    private Link getGenericLink (final Link link) {
+        for (final Link tmpLink : this.linkLister.getLinks ()) {
+            if (tmpLink.getRel ().equals (link.getRel ())) {
+                return tmpLink;
+            }
+        }
+        return null;
+    }
+
+    private List<Link> getListOfSublinks (final Link link) {
+        final List<Link> result = new LinkedList<Link> ();
+        for (final Link tmpLink : this.linkLister.getLinks ()) {
+            if (tmpLink.getHref ().startsWith (link.getHref ()) && !tmpLink.getRel ().equals (link.getRel ())) {
+                result.add (tmpLink);
+            }
+        }
+        return result;
+    }
+
+    public ObjectNode<Node> surroundWithLinks (final ObjectNode<Node> objectNode) {
+        final Link currentLink = this.get (Thread.currentThread ().getStackTrace () [2]);
+        final Link currentGenericLink = this.getGenericLink (currentLink);
         final NodeFactory factory = NodeFactory.instance;
         ArrayNode array = (ArrayNode) objectNode.get ("links");
         if (array == null) {
@@ -74,35 +93,13 @@ public class LinkHelper {
             objectNode.set ("links", array);
         }
         final List<Link> links = this.getListOfSublinks (currentGenericLink);
-        for (Link link : links) {
+        for (final Link link : links) {
             String href = link.getHref ();
             href = this.findPossibleReplacements (objectNode, href);
-            array.add ( ((ObjectNode<Node>) factory.objectNode ().put ("rel", link.getRel ())
-                                                           .put ("href", href)
-                                                           .set ("params", factory.pojoNode (link.getParams ())))
-                                                           .set ("methods",
+            array.add (factory.objectNode ().put ("rel", link.getRel ()).put ("href", href).set ("params", factory.pojoNode (link.getParams ())).set ("methods",
                     factory.pojoNode (link.getMethods ())));
-                    
+
         }
         return objectNode;
-    }
-    
-    private Link getGenericLink (Link link) {
-        for (Link tmpLink : linkLister.getLinks ()) {
-            if (tmpLink.getRel ().equals (link.getRel ())) {
-                return tmpLink;
-            }
-        }
-        return null;
-    }
-    
-    private List<Link> getListOfSublinks (Link link) {
-        List<Link> result = new LinkedList<Link> ();
-        for (Link tmpLink : linkLister.getLinks ()) {
-            if (tmpLink.getHref ().startsWith (link.getHref ()) && !tmpLink.getRel ().equals (link.getRel ())) {
-                result.add (tmpLink);
-            }
-        }
-        return result;
     }
 }

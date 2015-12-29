@@ -14,39 +14,39 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 public class RequestBodyPathAnnotationArgumentResolver implements HandlerMethodArgumentResolver {
-    
-    private static final String BODY_ATTRIBUTE = "REQUEST_BODY";
-    
-    @Override
-    public boolean supportsParameter (MethodParameter parameter) {
-        return parameter.hasParameterAnnotation (RequestBodyPath.class);
-    }
-    
-    @Override
-    public Object resolveArgument (MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
-            throws Exception {
-        String body = this.getRequestBody (webRequest);
-        String pathValue = parameter.getParameterAnnotation (RequestBodyPath.class).value ();
 
-        MediaType mediaType = MediaType.parseMediaType (webRequest.getHeader (HttpHeaders.CONTENT_TYPE));
-        return ArgumentResolverAction.run (mediaType, body, pathValue);
-    }
-    
-    private String getRequestBody (NativeWebRequest webRequest) {
-        HttpServletRequest servletRequest = webRequest.getNativeRequest (HttpServletRequest.class);
-        String entityBody = (String) servletRequest.getAttribute (BODY_ATTRIBUTE);
+    private static final String BODY_ATTRIBUTE = "REQUEST_BODY";
+
+    private String getRequestBody (final NativeWebRequest webRequest) {
+        final HttpServletRequest servletRequest = webRequest.getNativeRequest (HttpServletRequest.class);
+        final String entityBody = (String) servletRequest.getAttribute (RequestBodyPathAnnotationArgumentResolver.BODY_ATTRIBUTE);
         if (entityBody == null) {
             try {
-                Scanner scanner = new Scanner(servletRequest.getInputStream (),"UTF-8");
-                String body = scanner.useDelimiter("\\A").next();
-                servletRequest.setAttribute (BODY_ATTRIBUTE, body);
+                final Scanner scanner = new Scanner (servletRequest.getInputStream (), "UTF-8");
+                final String body = scanner.useDelimiter ("\\A").next ();
+                servletRequest.setAttribute (RequestBodyPathAnnotationArgumentResolver.BODY_ATTRIBUTE, body);
                 scanner.close ();
                 return body;
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException (e);
             }
         }
         return entityBody;
-        
+
+    }
+
+    @Override
+    public Object resolveArgument (final MethodParameter parameter, final ModelAndViewContainer mavContainer, final NativeWebRequest webRequest,
+            final WebDataBinderFactory binderFactory) throws Exception {
+        final String body = this.getRequestBody (webRequest);
+        final String pathValue = parameter.getParameterAnnotation (RequestBodyPath.class).value ();
+
+        final MediaType mediaType = MediaType.parseMediaType (webRequest.getHeader (HttpHeaders.CONTENT_TYPE));
+        return ArgumentResolverAction.run (mediaType, body, pathValue);
+    }
+
+    @Override
+    public boolean supportsParameter (final MethodParameter parameter) {
+        return parameter.hasParameterAnnotation (RequestBodyPath.class);
     }
 }

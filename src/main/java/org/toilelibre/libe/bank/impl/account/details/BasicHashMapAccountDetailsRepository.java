@@ -9,16 +9,21 @@ import org.toilelibre.libe.bank.model.account.details.AccountDetails;
 import org.toilelibre.libe.bank.model.account.details.AccountDetailsRepository;
 
 public class BasicHashMapAccountDetailsRepository implements AccountDetailsRepository {
-    
+
     private final Map<String, AccountDetails> detailsMap;
-                                              
+
     @Inject
-    private AccountDetails.Builder            detailsBuilder;
-                                              
+    private AccountDetails.Builder detailsBuilder;
+
     public BasicHashMapAccountDetailsRepository () {
         this.detailsMap = new HashMap<String, AccountDetails> ();
     }
-    
+
+    @Override
+    public void update (final String iban, final AccountDetails details) {
+        this.detailsMap.put (iban, details);
+    }
+
     @Override
     public AccountDetails view (final String iban) {
         if (this.detailsMap.get (iban) == null) {
@@ -26,10 +31,5 @@ public class BasicHashMapAccountDetailsRepository implements AccountDetailsRepos
         }
         return this.detailsMap.get (iban);
     }
-    
-    @Override
-    public void update (final String iban, final AccountDetails details) {
-        this.detailsMap.put (iban, details);
-    }
-    
+
 }

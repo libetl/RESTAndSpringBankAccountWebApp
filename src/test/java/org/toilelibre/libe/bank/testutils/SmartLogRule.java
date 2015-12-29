@@ -8,17 +8,17 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 public class SmartLogRule implements TestRule {
-    
+
     static class LoggingStatement extends Statement {
-        
+
         private final Description description;
         private final Statement   base;
-                                  
+
         public LoggingStatement (final Statement base1, final Description description1) {
             this.base = base1;
             this.description = description1;
         }
-        
+
         @Override
         public void evaluate () throws Throwable {
             final long start = System.currentTimeMillis ();
@@ -36,17 +36,17 @@ public class SmartLogRule implements TestRule {
             MDC.remove (SmartLogRule.TEST_CLASS);
             MDC.remove (SmartLogRule.TEST_METHOD);
         }
-        
+
     }
-    
+
     private static final String TEST_CLASS  = "TestClass";
     private static final String TEST_METHOD = "TestMethod";
     private static final String TEST_ERROR  = "/!\\TestError/!\\";
     private static final String TEST_BEGIN  = "Testing...";
     private static final String TEST_END    = "End of test (OK)";
-                                            
-    private static final Logger LOGGER      = LoggerFactory.getLogger (SmartLogRule.class);
-                                            
+
+    private static final Logger LOGGER = LoggerFactory.getLogger (SmartLogRule.class);
+
     @Override
     public Statement apply (final Statement base, final Description description) {
         return new LoggingStatement (base, description);
