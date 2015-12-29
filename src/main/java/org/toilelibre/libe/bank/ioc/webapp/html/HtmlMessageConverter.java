@@ -92,11 +92,10 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
         if ( (content instanceof ComplexObjectNode) && ((ComplexObjectNode<Node>) content).containsKey ("links")) {
             links.addAll ((ArrayNode) ((ComplexObjectNode<Node>) content).remove ("links"));
         }
-        outputMessage.getBody ().write ("</h2><p>".getBytes ());
+        outputMessage.getBody ().write ("</h2>".getBytes ());
         this.writeContent (content, outputMessage, links);
-        outputMessage.getBody ().write ("</p><p>".getBytes ());
         this.writeLinks (links, outputMessage);
-        outputMessage.getBody ().write ("</p><p><a href=\"javascript:history.go(-1)\">Go back</a></p></body></html>".getBytes ());
+        outputMessage.getBody ().write ("<p><a href=\"javascript:history.go(-1)\">Go back</a></p></body></html>".getBytes ());
     }
 
     private void writeContent (final ArrayNode value, final HttpOutputMessage outputMessage, final ArrayNode links) throws IOException {
