@@ -83,7 +83,7 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
         outputMessage.getBody ().write (response.getSelf ().getRel ().getBytes ());
         outputMessage.getBody ().write ("</h1><p>".getBytes ());
         outputMessage.getBody ().write (response.getOk () == 1 ? "<p>Request successful</p>".getBytes () : "<p>Problem during request</p>".getBytes ());
-        outputMessage.getBody ().write ("</p><h2>".getBytes ());
+        outputMessage.getBody ().write ("<h2>".getBytes ());
         outputMessage.getBody ().write (response.getType ().getBytes ());
 
         final Node content = NodeFactory.instance.pojoNode (response.getContent ());
