@@ -2,6 +2,7 @@ package org.toilelibre.libe.bank.actions.entity;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,8 +40,21 @@ public class PrimitiveNode implements Node {
         return this.value.toString ();
     }
 
+    @Override
+    public boolean equals (final Object obj) {
+        if (! (obj instanceof PrimitiveNode)) {
+            return false;
+        }
+        return Objects.equals (this.value, ((PrimitiveNode) obj).value);
+    }
+
     public String getString () {
         return this.value.toString ();
+    }
+
+    @Override
+    public int hashCode () {
+        return Objects.hashCode (this.value);
     }
 
     @Override

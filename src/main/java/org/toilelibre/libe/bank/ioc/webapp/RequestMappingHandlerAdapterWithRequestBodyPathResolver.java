@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBody
 import org.springframework.web.servlet.mvc.method.annotation.ServletRequestMethodArgumentResolver;
 import org.toilelibre.libe.bank.ioc.webapp.argresolver.RequestBodyPathAnnotationArgumentResolver;
 import org.toilelibre.libe.bank.ioc.webapp.html.HtmlMessageConverter;
+import org.toilelibre.libe.bank.ioc.webapp.html.WwwFormDataMessageConverter;
 import org.toilelibre.libe.bank.ioc.webapp.yaml.YamlMessageConverter;
 
 public class RequestMappingHandlerAdapterWithRequestBodyPathResolver extends RequestMappingHandlerAdapter {
@@ -42,6 +43,7 @@ public class RequestMappingHandlerAdapterWithRequestBodyPathResolver extends Req
     public List<HttpMessageConverter<?>> getMessageConverters () {
         final List<HttpMessageConverter<?>> converters = super.getMessageConverters ();
         converters.add (new YamlMessageConverter ());
+        converters.add (new WwwFormDataMessageConverter ());
         converters.add (new HtmlMessageConverter ());
         return converters;
     }

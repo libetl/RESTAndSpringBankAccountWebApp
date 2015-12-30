@@ -60,8 +60,7 @@ public class LinkHelper {
             throw new RestClientException ("API method not found");
         }
         return new Link (this.linkLister.stackTraceElementToFriendlyName (stackTraceElement), this.httpServletRequest.getRequestURL ().toString (),
-                new RequestMethod [] { RequestMethod.valueOf (this.httpServletRequest.getMethod ()) },
-                this.linkLister.filterNotPayloadParameters (method, method.getParameterTypes ()));
+                new RequestMethod [] { RequestMethod.valueOf (this.httpServletRequest.getMethod ()) }, this.linkLister.getLinkParams (method));
     }
 
     private Link getGenericLink (final Link link) {

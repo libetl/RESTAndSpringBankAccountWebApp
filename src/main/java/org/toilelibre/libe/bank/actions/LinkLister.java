@@ -2,15 +2,12 @@ package org.toilelibre.libe.bank.actions;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
@@ -19,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.toilelibre.libe.bank.actions.Link.Param;
+import org.toilelibre.libe.bank.ioc.webapp.argresolver.RequestBodyPath;
 
 public class LinkLister {
 
@@ -30,31 +29,20 @@ public class LinkLister {
 
     private List<Link> links;
 
-    private boolean annotationsIncludePathVariable (final List<Annotation> annotations) {
-        for (final Annotation annotation : annotations) {
-            if (annotation instanceof PathVariable) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private Link entryToLink (final Entry<RequestMappingInfo, HandlerMethod> entry) {
         return new Link (this.methodToFriendlyName (entry.getValue ().getMethod ()),
                 this.getBaseUrl () + entry.getKey ().getPatternsCondition ().getPatterns ().iterator ().next ().replaceFirst ("^/", ""),
-                entry.getValue ().getMethodAnnotation (RequestMapping.class).method (),
-                this.filterNotPayloadParameters (entry.getValue ().getMethod (), entry.getValue ().getMethod ().getParameterTypes ()));
+                entry.getValue ().getMethodAnnotation (RequestMapping.class).method (), this.getLinkParams (entry.getValue ().getMethod ()));
     }
 
-    String [] filterNotPayloadParameters (final Method method, final Class<?> [] parameterTypes) {
-        final List<String> classes = new LinkedList<String> ();
-        for (int i = 0 ; i < parameterTypes.length ; i++) {
-            if (!this.annotationsIncludePathVariable (Arrays.asList (method.getParameterAnnotations () [i])) && ! (ServletRequest.class.isAssignableFrom (parameterTypes [i]))
-                    && ! (ServletResponse.class.isAssignableFrom (parameterTypes [i]))) {
-                classes.add (parameterTypes [i].getSimpleName ());
+    @SuppressWarnings ("unchecked")
+    private <T extends Annotation> T getAnnotationOfThisType (final Class<T> annot, final Annotation [] annotations) {
+        for (final Annotation annotation : annotations) {
+            if (annotation.annotationType () == annot) {
+                return (T) annotation;
             }
         }
-        return classes.toArray (new String [classes.size ()]);
+        return null;
     }
 
     private String getBaseUrl () {
@@ -62,6 +50,25 @@ public class LinkLister {
         final String uri = this.httpServletRequest.getRequestURI ();
         final String ctx = this.httpServletRequest.getContextPath () + this.httpServletRequest.getServletPath ();
         return url.substring (0, (url.length () - uri.length ()) + ctx.length ()) + "/";
+    }
+
+    Param [] getLinkParams (final Method method) {
+        boolean canDisplayRequestStub = true;
+        final Class<?> [] parameterTypes = method.getParameterTypes ();
+        final List<Param> params = new LinkedList<Param> ();
+        for (int i = 0 ; i < parameterTypes.length ; i++) {
+            final RequestBodyPath requestBodyPath = this.getAnnotationOfThisType (RequestBodyPath.class, method.getParameterAnnotations () [i]);
+            if (requestBodyPath != null) {
+                params.add (new Param (requestBodyPath.value (), parameterTypes [i].getSimpleName ()));
+            } else if (this.getAnnotationOfThisType (PathVariable.class, method.getParameterAnnotations () [i]) == null) {
+                canDisplayRequestStub = false;
+            }
+        }
+        if (!canDisplayRequestStub) {
+            params.clear ();
+            params.add (new Param ("unknownParameters", "object"));
+        }
+        return params.toArray (new Param [params.size ()]);
     }
 
     public List<Link> getLinks () {

@@ -42,7 +42,7 @@ public class RequestBodyPathAnnotationArgumentResolver implements HandlerMethodA
         final String pathValue = parameter.getParameterAnnotation (RequestBodyPath.class).value ();
 
         final MediaType mediaType = MediaType.parseMediaType (webRequest.getHeader (HttpHeaders.CONTENT_TYPE));
-        return ArgumentResolverAction.run (mediaType, body, pathValue);
+        return ArgumentResolverAction.run (mediaType, body, pathValue, parameter.getParameterType ());
     }
 
     @Override

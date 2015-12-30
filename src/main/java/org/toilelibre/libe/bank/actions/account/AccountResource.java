@@ -38,10 +38,11 @@ public class AccountResource {
     private LinkHelper linkHelper;
 
     @RequestMapping (method = RequestMethod.POST, path = "/account/{iban}")
-    public Response<String> create (@PathVariable final String iban) throws BankAccountException {
+    public Response<ObjectNode<Node>> create (@PathVariable final String iban) throws BankAccountException {
         this.updateOrCreateAccountService.create (iban, this.accountRule);
         AccountResource.LOGGER.info ("New Account created " + iban);
-        return new Response<String> (this.linkHelper.get (), iban);
+        final NodeFactory factory = NodeFactory.instance;
+        return new Response<ObjectNode<Node>> (this.linkHelper.get (), this.linkHelper.surroundWithLinks (factory.objectNode ().put ("iban", iban)));
     }
 
     @RequestMapping (method = RequestMethod.GET, path = "/account/{iban}")

@@ -7,6 +7,28 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class Link {
 
+    public static class Param {
+        @JacksonXmlElementWrapper (useWrapping = false)
+        private final String binding;
+        @JacksonXmlElementWrapper (useWrapping = false)
+        private final String type;
+
+        public Param (final String binding, final String type) {
+            super ();
+            this.binding = binding;
+            this.type = type;
+        }
+
+        public String getBinding () {
+            return this.binding;
+        }
+
+        public String getType () {
+            return this.type;
+        }
+
+    }
+
     @JacksonXmlProperty (namespace = "xsi", isAttribute = true)
     private final String           rel;
     @JacksonXmlElementWrapper (useWrapping = false)
@@ -14,9 +36,9 @@ public class Link {
     @JacksonXmlElementWrapper (useWrapping = false)
     private final RequestMethod [] methods;
     @JacksonXmlElementWrapper (useWrapping = false)
-    private final String []        params;
+    private final Param []         params;
 
-    public Link (final String rel1, final String href1, final RequestMethod [] methods1, final String [] params) {
+    public Link (final String rel1, final String href1, final RequestMethod [] methods1, final Param [] params) {
         this.rel = rel1;
         this.href = href1;
         this.methods = methods1;
@@ -31,7 +53,7 @@ public class Link {
         return this.methods.clone ();
     }
 
-    public String [] getParams () {
+    public Param [] getParams () {
         return this.params;
     }
 
