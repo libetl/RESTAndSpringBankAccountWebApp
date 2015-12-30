@@ -8,7 +8,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+@JsonSerialize (using = PrimitiveNode.PrimitiveNodeWriter.class)
 public class PrimitiveNode implements Node {
 
     public static class PrimitiveNodeWriter extends JsonSerializer<PrimitiveNode> {
