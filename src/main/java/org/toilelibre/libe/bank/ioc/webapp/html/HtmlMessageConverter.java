@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -54,10 +55,10 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
 
     }
 
-    private String displayReplaceableParams (final String rel, final String url) {
+    private String displayReplaceableParams (final String linkId, final String url) {
         return url.replaceAll ("\\{([^}]+)\\}",
-                "<input type=\"text\" data-model=\"{$1}\" id=\"link-" + rel + "-$1\" onclick=\"javascript:return false\" onselect=\"javascript:updateLink ('" + rel
-                        + "')\" onkeyup=\"javascript:updateLink ('" + rel + "')\" placeholder=\"$1\"/>");
+                "<input type=\"text\" data-model=\"{$1}\" id=\"link-" + linkId + "-$1\" onclick=\"javascript:return false\" onselect=\"javascript:updateLink ('" + linkId
+                        + "')\" onkeyup=\"javascript:updateLink ('" + linkId + "')\" placeholder=\"$1\"/>");
     }
 
     @Override
@@ -178,30 +179,30 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
         return false;
     }
 
-    private void writeForm (final ComplexObjectNode<PrimitiveNode> trueLink, final OutputStream stream) throws IOException {
-        stream.write ( ("<li id=\"" + trueLink.get ("rel").asText () + "\">" + trueLink.get ("rel").asText () + " : ").getBytes ());
+    private void writeForm (final ComplexObjectNode<PrimitiveNode> trueLink, UUID linkUuid, final OutputStream stream) throws IOException {
+        stream.write ( ("<li id=\"" + linkUuid.toString () + "\">" + trueLink.get ("rel").asText () + " : ").getBytes ());
         stream.write ( ("<div class=\"col-12\"><div class=\"well bs-component\"><form class=\"form-horizontal\" data-model=\"" + trueLink.get ("href").asText () + "\" method=\""
-                + ((ArrayNode) trueLink.get ("methods")).get (0).asText () + "\" enctype=\"x-www-form-urlencoded\" id=\"link-" + trueLink.get ("rel").asText () + "\" action=\""
+                + ((ArrayNode) trueLink.get ("methods")).get (0).asText () + "\" enctype=\"x-www-form-urlencoded\" id=\"link-" + linkUuid.toString () + "\" action=\""
                 + trueLink.get ("href").asText () + "\">").getBytes ());
-        stream.write ( ("<fieldset><legend title=\"" + trueLink.get ("rel").asText () + "\">"
-                + this.displayReplaceableParams (trueLink.get ("rel").asText (), trueLink.get ("href").asText ()) + "</legend>").getBytes ());
+        stream.write ( ("<fieldset><legend title=\"" + linkUuid.toString () + "\">"
+                + this.displayReplaceableParams (linkUuid.toString (), trueLink.get ("href").asText ()) + "</legend>").getBytes ());
         for (final Node param : (ArrayNode) trueLink.get ("params")) {
-            this.writeInputField (param, trueLink, stream);
+            this.writeInputField (param, linkUuid.toString (), trueLink, stream);
         }
 
         stream.write ("<input class=\"btn btn-success\" type=\"submit\" value=\"send\"/></fieldset></form>".getBytes ());
         if (!"POST".equals ( ((ArrayNode) trueLink.get ("methods")).get (0).asText ())) {
-            this.writeSubmissionScript (trueLink, stream);
+            this.writeSubmissionScript (linkUuid.toString (), stream);
         }
         stream.write ("</div></div></li>".getBytes ());
 
     }
 
-    private void writeInputField (final Node param, final ComplexObjectNode<PrimitiveNode> trueLink, final OutputStream stream) throws IOException {
+    private void writeInputField (final Node param, String linkId, final ComplexObjectNode<PrimitiveNode> trueLink, final OutputStream stream) throws IOException {
         @SuppressWarnings ("unchecked")
         final ComplexObjectNode<PrimitiveNode> paramAsNode = (ComplexObjectNode<PrimitiveNode>) param;
         stream.write ( ("<div class=\"form-group\"><label class=\"col-lg-2 control-label\" for=\"" + paramAsNode.get ("binding").asText () + "\">"
-                + paramAsNode.get ("binding").asText () + "</label><div class=\"col-lg-10\"><input id=\"link-" + trueLink.get ("rel").asText () + "-"
+                + paramAsNode.get ("binding").asText () + "</label><div class=\"col-lg-10\"><input id=\"link-" + linkId + "-"
                 + paramAsNode.get ("binding").asText () + "\" type=\"text\" name=\"" + paramAsNode.get ("binding").asText () + "\" type=\"submit\" placeholder=\""
                 + paramAsNode.get ("type").asText () + "\"/></div></div>").getBytes ());
     }
@@ -214,26 +215,27 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
         for (final Node link : links) {
             @SuppressWarnings ("unchecked")
             final ComplexObjectNode<PrimitiveNode> trueLink = (ComplexObjectNode<PrimitiveNode>) link;
+            UUID linkUuid = UUID.randomUUID ();
             if ( ((ArrayNode) trueLink.get ("methods")).contains (new PrimitiveNode ("GET"))) {
-                this.writeSimpleGetLink (trueLink, stream);
+                this.writeSimpleGetLink (trueLink, linkUuid, stream);
             } else if (! ((ArrayNode) trueLink.get ("methods")).isEmpty ()) {
-                this.writeForm (trueLink, stream);
+                this.writeForm (trueLink, linkUuid, stream);
             }
         }
         stream.write ("</ul>".getBytes ());
     }
 
-    private void writeSimpleGetLink (final ComplexObjectNode<PrimitiveNode> trueLink, final OutputStream stream) throws IOException {
-        stream.write ( ("<li id=\"" + trueLink.get ("rel").asText () + "\">" + trueLink.get ("rel").asText () + " : <a href=\"" + trueLink.get ("href").asText ()
-                + "\" data-model=\"" + trueLink.get ("href").asText () + "\" id=\"link-" + trueLink.get ("rel").asText () + "\" title=\"" + trueLink.get ("rel").asText () + "\">"
-                + this.displayReplaceableParams (trueLink.get ("rel").asText (), trueLink.get ("href").asText ()) + "</a></li>").getBytes ());
+    private void writeSimpleGetLink (final ComplexObjectNode<PrimitiveNode> trueLink, UUID linkUuid, final OutputStream stream) throws IOException {
+        stream.write ( ("<li id=\"" + linkUuid + "\">" + trueLink.get ("rel").asText () + " : <a href=\"" + trueLink.get ("href").asText ()
+                + "\" data-model=\"" + trueLink.get ("href").asText () + "\" id=\"link-" + linkUuid + "\" title=\"" + trueLink.get ("rel").asText () + "\">"
+                + this.displayReplaceableParams (linkUuid.toString (), trueLink.get ("href").asText ()) + "</a></li>").getBytes ());
     }
 
-    private void writeSubmissionScript (final ComplexObjectNode<PrimitiveNode> trueLink, final OutputStream stream) throws IOException {
-        stream.write ( ("<script type=\"text/javascript\">" + "$(document).ready(function() {$('#link-" + trueLink.get ("rel").asText () + "').on('submit', function(e) {"
-                + "e.preventDefault();" + "var $this = $(this);" + "console.log ($('#link-" + trueLink.get ("rel").asText () + "-unknownParameters'));" + "$.ajax({"
-                + "url: $this.attr('action')," + "type: $this.attr('method')," + "data: $('#link-" + trueLink.get ("rel").asText () + "-unknownParameters').length > 0 ? $('#link-"
-                + trueLink.get ("rel").asText () + "-unknownParameters').val () : $this.serialize()," + "dataType: \"html\"," + "success: function(html) {"
+    private void writeSubmissionScript (String linkId, final OutputStream stream) throws IOException {
+        stream.write ( ("<script type=\"text/javascript\">" + "$(document).ready(function() {$('#link-" + linkId + "').on('submit', function(e) {"
+                + "e.preventDefault();" + "var $this = $(this);" + "$.ajax({"
+                + "url: $this.attr('action')," + "type: $this.attr('method')," + "data: $('#link-" + linkId + "-unknownParameters').length > 0 ? $('#link-"
+                + linkId + "-unknownParameters').val () : $this.serialize()," + "dataType: \"html\"," + "success: function(html) {"
                 + "    var body = html.substring (html.indexOf ('<body>'));" + "    body = body.substring (0, html.indexOf ('</body>'));"
                 + "    $('body').html ($(body).wrapAll('<div>').parent().html());" + "    $('#goBack').attr ('href', 'javascript:history.go (0)');" + "}" + "});});});</script>")
                         .getBytes ());
