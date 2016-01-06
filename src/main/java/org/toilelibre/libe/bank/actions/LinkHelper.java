@@ -45,6 +45,15 @@ public class LinkHelper {
         return href;
     }
 
+    public ObjectNode<Node> findSimilarLinks (final ObjectNode<Node> objectNode) {
+        this.linkLister.getLinks ();
+        final Link currentLink = this.get (Thread.currentThread ().getStackTrace () [2]);
+        final List<Link> similarLinks = this.linkLister.getSimilarLinks (currentLink);
+
+        this.linksToObjectNode (similarLinks, objectNode, "similarLinks");
+        return objectNode;
+    }
+
     public Link get () {
         return this.get (Thread.currentThread ().getStackTrace () [2]);
     }
@@ -82,16 +91,13 @@ public class LinkHelper {
         return result;
     }
 
-    public ObjectNode<Node> surroundWithLinks (final ObjectNode<Node> objectNode) {
-        final Link currentLink = this.get (Thread.currentThread ().getStackTrace () [2]);
-        final Link currentGenericLink = this.getGenericLink (currentLink);
+    private void linksToObjectNode (final List<Link> links, final ObjectNode<Node> objectNode, final String nodeName) {
         final NodeFactory factory = NodeFactory.instance;
-        ArrayNode array = (ArrayNode) objectNode.get ("links");
+        ArrayNode array = (ArrayNode) objectNode.get (nodeName);
         if (array == null) {
             array = factory.arrayNode ();
-            objectNode.set ("links", array);
+            objectNode.set (nodeName, array);
         }
-        final List<Link> links = this.getListOfSublinks (currentGenericLink);
         for (final Link link : links) {
             String href = link.getHref ();
             href = this.findPossibleReplacements (objectNode, href);
@@ -99,6 +105,14 @@ public class LinkHelper {
                     factory.pojoNode (link.getMethods ())));
 
         }
+    }
+
+    public ObjectNode<Node> surroundWithLinks (final ObjectNode<Node> objectNode) {
+        final Link currentLink = this.get (Thread.currentThread ().getStackTrace () [2]);
+        final Link currentGenericLink = this.getGenericLink (currentLink);
+
+        final List<Link> links = this.getListOfSublinks (currentGenericLink);
+        this.linksToObjectNode (links, objectNode, "links");
         return objectNode;
     }
 }

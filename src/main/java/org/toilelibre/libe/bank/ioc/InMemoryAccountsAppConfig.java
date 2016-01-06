@@ -1,7 +1,13 @@
 package org.toilelibre.libe.bank.ioc;
 
+import java.io.IOException;
 import java.util.Date;
 
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.search.spell.SpellChecker;
+import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -161,8 +167,20 @@ public class InMemoryAccountsAppConfig implements AppConfig {
 
     @Override
     @Bean
+    public IndexWriterConfig getIndexWriterConfig () {
+        return new IndexWriterConfig (Version.LUCENE_36, new StandardAnalyzer (Version.LUCENE_36));
+    }
+
+    @Override
+    @Bean
     public RemoveAccountService getRemoveAccountService () {
         return new RemoveAccountInMemoryService ();
+    }
+
+    @Override
+    @Bean
+    public SpellChecker getSpellChecker () throws IOException {
+        return new SpellChecker (new RAMDirectory ());
     }
 
     @Override
@@ -170,5 +188,4 @@ public class InMemoryAccountsAppConfig implements AppConfig {
     public CreateAccountService getUpdateOrCreateAccountService () {
         return new CreateAccountInMemoryService ();
     }
-
 }

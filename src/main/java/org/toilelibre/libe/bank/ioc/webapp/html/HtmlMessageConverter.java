@@ -110,7 +110,7 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
         }
         stream.write ("</h2>".getBytes ());
         this.writeContent (content, stream, links);
-        this.writeLinks (links, stream);
+        this.writeLinks ("Links", links, stream);
         stream.write (HtmlMessageConverter.FOOTER_WITH_GO_BACK_LINK.getBytes ());
     }
 
@@ -168,24 +168,28 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
         }
     }
 
+    @SuppressWarnings ("unchecked")
     private boolean writeError (final Object t, final OutputStream stream) throws IOException {
         if ( (t instanceof ObjectNode) && "0".equals ( ((ObjectNode<?>) t).get ("ok").asText ())) {
             final ObjectNode<?> errorPayload = (ObjectNode<?>) t;
-            stream.write ( (HtmlMessageConverter.HEADER_WITH_DOCTYPE + "Error</title></head><body><h1>" + errorPayload.get ("name").asText ()
-                    + "</h1><p>The kind of this error is <code>" + errorPayload.get ("kind").asText () + "</code></p><p><u>Description :</u> "
-                    + errorPayload.get ("description").asText () + "</p>" + HtmlMessageConverter.FOOTER_WITH_GO_BACK_LINK).getBytes ());
+            stream.write (
+                    (HtmlMessageConverter.HEADER_WITH_DOCTYPE + "Error</title></head><body><h1>" + errorPayload.get ("name").asText () + "</h1><p>The kind of this error is <code>"
+                            + errorPayload.get ("kind").asText () + "</code></p><p><u>Description :</u> " + errorPayload.get ("description").asText () + "</p>").getBytes ());
+            this.writeSimilarLinks ((ObjectNode<Node>) t, stream);
+            stream.write (HtmlMessageConverter.FOOTER_WITH_GO_BACK_LINK.getBytes ());
             return true;
         }
         return false;
     }
 
-    private void writeForm (final ComplexObjectNode<PrimitiveNode> trueLink, UUID linkUuid, final OutputStream stream) throws IOException {
+    private void writeForm (final ComplexObjectNode<PrimitiveNode> trueLink, final UUID linkUuid, final OutputStream stream) throws IOException {
         stream.write ( ("<li id=\"" + linkUuid.toString () + "\">" + trueLink.get ("rel").asText () + " : ").getBytes ());
         stream.write ( ("<div class=\"col-12\"><div class=\"well bs-component\"><form class=\"form-horizontal\" data-model=\"" + trueLink.get ("href").asText () + "\" method=\""
                 + ((ArrayNode) trueLink.get ("methods")).get (0).asText () + "\" enctype=\"x-www-form-urlencoded\" id=\"link-" + linkUuid.toString () + "\" action=\""
                 + trueLink.get ("href").asText () + "\">").getBytes ());
-        stream.write ( ("<fieldset><legend title=\"" + linkUuid.toString () + "\">"
-                + this.displayReplaceableParams (linkUuid.toString (), trueLink.get ("href").asText ()) + "</legend>").getBytes ());
+        stream.write (
+                ("<fieldset><legend title=\"" + linkUuid.toString () + "\">" + this.displayReplaceableParams (linkUuid.toString (), trueLink.get ("href").asText ()) + "</legend>")
+                        .getBytes ());
         for (final Node param : (ArrayNode) trueLink.get ("params")) {
             this.writeInputField (param, linkUuid.toString (), trueLink, stream);
         }
@@ -198,24 +202,24 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
 
     }
 
-    private void writeInputField (final Node param, String linkId, final ComplexObjectNode<PrimitiveNode> trueLink, final OutputStream stream) throws IOException {
+    private void writeInputField (final Node param, final String linkId, final ComplexObjectNode<PrimitiveNode> trueLink, final OutputStream stream) throws IOException {
         @SuppressWarnings ("unchecked")
         final ComplexObjectNode<PrimitiveNode> paramAsNode = (ComplexObjectNode<PrimitiveNode>) param;
-        stream.write ( ("<div class=\"form-group\"><label class=\"col-lg-2 control-label\" for=\"" + paramAsNode.get ("binding").asText () + "\">"
-                + paramAsNode.get ("binding").asText () + "</label><div class=\"col-lg-10\"><input id=\"link-" + linkId + "-"
-                + paramAsNode.get ("binding").asText () + "\" type=\"text\" name=\"" + paramAsNode.get ("binding").asText () + "\" type=\"submit\" placeholder=\""
-                + paramAsNode.get ("type").asText () + "\"/></div></div>").getBytes ());
+        stream.write (
+                ("<div class=\"form-group\"><label class=\"col-lg-2 control-label\" for=\"" + paramAsNode.get ("binding").asText () + "\">" + paramAsNode.get ("binding").asText ()
+                        + "</label><div class=\"col-lg-10\"><input id=\"link-" + linkId + "-" + paramAsNode.get ("binding").asText () + "\" type=\"text\" name=\""
+                        + paramAsNode.get ("binding").asText () + "\" type=\"submit\" placeholder=\"" + paramAsNode.get ("type").asText () + "\"/></div></div>").getBytes ());
     }
 
-    private void writeLinks (final ArrayNode links, final OutputStream stream) throws IOException {
+    private void writeLinks (final String headerTitle, final ArrayNode links, final OutputStream stream) throws IOException {
         if (links.size () == 0) {
             return;
         }
-        stream.write ("<h2>Links</h2><ul>".getBytes ());
+        stream.write ( ("<h2>" + headerTitle + "</h2><ul>").getBytes ());
         for (final Node link : links) {
             @SuppressWarnings ("unchecked")
             final ComplexObjectNode<PrimitiveNode> trueLink = (ComplexObjectNode<PrimitiveNode>) link;
-            UUID linkUuid = UUID.randomUUID ();
+            final UUID linkUuid = UUID.randomUUID ();
             if ( ((ArrayNode) trueLink.get ("methods")).contains (new PrimitiveNode ("GET"))) {
                 this.writeSimpleGetLink (trueLink, linkUuid, stream);
             } else if (! ((ArrayNode) trueLink.get ("methods")).isEmpty ()) {
@@ -225,17 +229,25 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
         stream.write ("</ul>".getBytes ());
     }
 
-    private void writeSimpleGetLink (final ComplexObjectNode<PrimitiveNode> trueLink, UUID linkUuid, final OutputStream stream) throws IOException {
-        stream.write ( ("<li id=\"" + linkUuid + "\">" + trueLink.get ("rel").asText () + " : <a href=\"" + trueLink.get ("href").asText ()
-                + "\" data-model=\"" + trueLink.get ("href").asText () + "\" id=\"link-" + linkUuid + "\" title=\"" + trueLink.get ("rel").asText () + "\">"
+    private void writeSimilarLinks (final ObjectNode<Node> content, final OutputStream stream) throws IOException {
+        final ArrayNode links = new ArrayNode ();
+        if ( (content instanceof ComplexObjectNode) && ((ComplexObjectNode<Node>) content).containsKey ("similarLinks")) {
+            links.addAll ((ArrayNode) ((ComplexObjectNode<Node>) content).remove ("similarLinks"));
+        }
+        this.writeLinks ("Similar link", links, stream);
+
+    }
+
+    private void writeSimpleGetLink (final ComplexObjectNode<PrimitiveNode> trueLink, final UUID linkUuid, final OutputStream stream) throws IOException {
+        stream.write ( ("<li id=\"" + linkUuid + "\">" + trueLink.get ("rel").asText () + " : <a href=\"" + trueLink.get ("href").asText () + "\" data-model=\""
+                + trueLink.get ("href").asText () + "\" id=\"link-" + linkUuid + "\" title=\"" + trueLink.get ("rel").asText () + "\">"
                 + this.displayReplaceableParams (linkUuid.toString (), trueLink.get ("href").asText ()) + "</a></li>").getBytes ());
     }
 
-    private void writeSubmissionScript (String linkId, final OutputStream stream) throws IOException {
-        stream.write ( ("<script type=\"text/javascript\">" + "$(document).ready(function() {$('#link-" + linkId + "').on('submit', function(e) {"
-                + "e.preventDefault();" + "var $this = $(this);" + "$.ajax({"
-                + "url: $this.attr('action')," + "type: $this.attr('method')," + "data: $('#link-" + linkId + "-unknownParameters').length > 0 ? $('#link-"
-                + linkId + "-unknownParameters').val () : $this.serialize()," + "dataType: \"html\"," + "success: function(html) {"
+    private void writeSubmissionScript (final String linkId, final OutputStream stream) throws IOException {
+        stream.write ( ("<script type=\"text/javascript\">" + "$(document).ready(function() {$('#link-" + linkId + "').on('submit', function(e) {" + "e.preventDefault();"
+                + "var $this = $(this);" + "$.ajax({" + "url: $this.attr('action')," + "type: $this.attr('method')," + "data: $('#link-" + linkId
+                + "-unknownParameters').length > 0 ? $('#link-" + linkId + "-unknownParameters').val () : $this.serialize()," + "dataType: \"html\"," + "success: function(html) {"
                 + "    var body = html.substring (html.indexOf ('<body>'));" + "    body = body.substring (0, html.indexOf ('</body>'));"
                 + "    $('body').html ($(body).wrapAll('<div>').parent().html());" + "    $('#goBack').attr ('href', 'javascript:history.go (0)');" + "}" + "});});});</script>")
                         .getBytes ());

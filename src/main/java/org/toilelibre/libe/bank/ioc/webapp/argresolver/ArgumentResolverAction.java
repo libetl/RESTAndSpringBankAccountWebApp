@@ -72,7 +72,7 @@ public enum ArgumentResolverAction {
                 for (final String pair : pairs) {
                     final String [] fields = pair.split ("=");
                     final String name = URLDecoder.decode (fields [0], "UTF-8");
-                    if (path.equals (name) && fields.length > 1) {
+                    if (path.equals (name) && (fields.length > 1)) {
                         return new ObjectMapper ().convertValue (URLDecoder.decode (fields [1], "UTF-8"), parameterType);
                     }
                 }

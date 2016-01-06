@@ -1,5 +1,9 @@
 package org.toilelibre.libe.bank.ioc;
 
+import java.io.IOException;
+
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.search.spell.SpellChecker;
 import org.springframework.cache.CacheManager;
 import org.toilelibre.libe.bank.model.account.AccountRepository;
 import org.toilelibre.libe.bank.model.account.AccountRule;
@@ -59,7 +63,11 @@ interface AppConfig {
 
     FindAccountService getFindAccountService ();
 
+    IndexWriterConfig getIndexWriterConfig ();
+
     RemoveAccountService getRemoveAccountService ();
+
+    SpellChecker getSpellChecker () throws IOException;
 
     CreateAccountService getUpdateOrCreateAccountService ();
 }

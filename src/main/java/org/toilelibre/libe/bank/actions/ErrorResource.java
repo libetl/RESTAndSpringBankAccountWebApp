@@ -2,6 +2,7 @@ package org.toilelibre.libe.bank.actions;
 
 import java.util.UUID;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +30,9 @@ import org.toilelibre.libe.bank.model.account.error.ErrorCode.Kind;
 public class ErrorResource {
     private static Logger LOGGER = LoggerFactory.getLogger (ErrorResource.class);
 
+    @Inject
+    private LinkHelper linkHelper;
+
     @RequestMapping (path = "badEntityFormat")
     @ExceptionHandler (HttpMediaTypeNotSupportedException.class)
     @ResponseStatus (code = HttpStatus.UNSUPPORTED_MEDIA_TYPE)
@@ -43,8 +47,8 @@ public class ErrorResource {
     @ResponseStatus (code = HttpStatus.METHOD_NOT_ALLOWED)
     public ObjectNode<Node> badMethod () {
         final NodeFactory factory = NodeFactory.instance;
-        return factory.objectNode ().put ("ok", 0).put ("name", "BadMethodOfAPI").put ("description", "This API exists, but the request method does not exist.").put ("kind",
-                Kind.BAD_INPUT.name ());
+        return this.linkHelper.findSimilarLinks (factory.objectNode ().put ("ok", 0).put ("name", "BadMethodOfAPI")
+                .put ("description", "This API exists, but the request method does not exist.").put ("kind", Kind.BAD_INPUT.name ()));
     }
 
     @RequestMapping (path = "badRequest")
@@ -80,8 +84,9 @@ public class ErrorResource {
     @RequestMapping (path = "notFound")
     @ExceptionHandler (NoHandlerFoundException.class)
     @ResponseStatus (code = HttpStatus.NOT_FOUND)
-    public ObjectNode<Node> notFound () {
+    public ObjectNode<Node> notFound (final HttpServletRequest request) {
         final NodeFactory factory = NodeFactory.instance;
-        return factory.objectNode ().put ("ok", 0).put ("name", "APINotFound").put ("description", "This API does not exist").put ("kind", Kind.NOT_FOUND.name ());
+        return this.linkHelper.findSimilarLinks (
+                factory.objectNode ().put ("ok", 0).put ("name", "APINotFound").put ("description", "This API does not exist").put ("kind", Kind.NOT_FOUND.name ()));
     }
 }
