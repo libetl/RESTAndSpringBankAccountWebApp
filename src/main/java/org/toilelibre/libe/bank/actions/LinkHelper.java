@@ -45,12 +45,12 @@ public class LinkHelper {
         return href;
     }
 
-    public ObjectNode<Node> findSimilarLinks (final ObjectNode<Node> objectNode) {
+    public ObjectNode<Node> findSuggestedLink (final ObjectNode<Node> objectNode) {
         this.linkLister.getLinks ();
         final Link currentLink = this.get (Thread.currentThread ().getStackTrace () [2]);
-        final List<Link> similarLinks = this.linkLister.getSimilarLinks (currentLink);
+        final List<Link> suggestedLinks = this.linkLister.getSuggestedLinks (currentLink);
 
-        this.linksToObjectNode (similarLinks, objectNode, "similarLinks");
+        this.linksToObjectNode (suggestedLinks, objectNode, "suggestedLink");
         return objectNode;
     }
 

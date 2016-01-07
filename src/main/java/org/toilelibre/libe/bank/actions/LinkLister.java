@@ -114,7 +114,7 @@ public class LinkLister {
         return bigStringBuffer.toString ();
     }
 
-    public List<Link> getSimilarLinks (final Link link) {
+    public List<Link> getSuggestedLinks (final Link link) {
         try {
             final List<Link> similarLinks = new LinkedList<Link> ();
             final RequestMethod method = link.getMethods () [0];

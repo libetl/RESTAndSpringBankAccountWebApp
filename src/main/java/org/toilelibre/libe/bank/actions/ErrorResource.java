@@ -47,7 +47,7 @@ public class ErrorResource {
     @ResponseStatus (code = HttpStatus.METHOD_NOT_ALLOWED)
     public ObjectNode<Node> badMethod () {
         final NodeFactory factory = NodeFactory.instance;
-        return this.linkHelper.findSimilarLinks (factory.objectNode ().put ("ok", 0).put ("name", "BadMethodOfAPI")
+        return this.linkHelper.findSuggestedLink (factory.objectNode ().put ("ok", 0).put ("name", "BadMethodOfAPI")
                 .put ("description", "This API exists, but the request method does not exist.").put ("kind", Kind.BAD_INPUT.name ()));
     }
 
@@ -86,7 +86,7 @@ public class ErrorResource {
     @ResponseStatus (code = HttpStatus.NOT_FOUND)
     public ObjectNode<Node> notFound (final HttpServletRequest request) {
         final NodeFactory factory = NodeFactory.instance;
-        return this.linkHelper.findSimilarLinks (
+        return this.linkHelper.findSuggestedLink (
                 factory.objectNode ().put ("ok", 0).put ("name", "APINotFound").put ("description", "This API does not exist").put ("kind", Kind.NOT_FOUND.name ()));
     }
 }
