@@ -90,6 +90,7 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
     @SuppressWarnings ("unchecked")
     @Override
     public void write (final Object t, final Type type, final MediaType contentType, final HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+        outputMessage.getHeaders ().setContentType (MediaType.TEXT_HTML);
         final OutputStream stream = outputMessage.getBody ();
         if (! (t instanceof Response)) {
             boolean written = false;

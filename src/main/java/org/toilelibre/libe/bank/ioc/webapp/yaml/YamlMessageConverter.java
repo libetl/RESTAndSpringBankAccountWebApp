@@ -20,6 +20,7 @@ import com.fasterxml.jackson.dataformat.yaml.snakeyaml.Yaml;
 
 public class YamlMessageConverter implements GenericHttpMessageConverter<Object> {
     public static final String APPLICATION_YAML = "application/yaml";
+    private static final List<MediaType> YAML_ONLY = Collections.singletonList (MediaType.parseMediaType (YamlMessageConverter.APPLICATION_YAML));;
 
     @Override
     public boolean canRead (final Class<?> clazz, final MediaType mediaType) {
@@ -44,7 +45,7 @@ public class YamlMessageConverter implements GenericHttpMessageConverter<Object>
 
     @Override
     public List<MediaType> getSupportedMediaTypes () {
-        return Collections.singletonList (MediaType.parseMediaType (YamlMessageConverter.APPLICATION_YAML));
+        return YamlMessageConverter.YAML_ONLY;
     }
 
     @Override
@@ -65,6 +66,7 @@ public class YamlMessageConverter implements GenericHttpMessageConverter<Object>
 
     @Override
     public void write (final Object t, final Type type, final MediaType contentType, final HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+        outputMessage.getHeaders ().setContentType (this.getSupportedMediaTypes ().get (0));
         @SuppressWarnings ("unchecked")
         final Map<String, Object> jsonObject = new ObjectMapper ().convertValue (t, Map.class);
         final DumperOptions options = new DumperOptions ();
