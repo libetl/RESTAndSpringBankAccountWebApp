@@ -256,10 +256,9 @@ public class HtmlMessageConverter implements GenericHttpMessageConverter<Object>
     }
     
     private void writeSubmissionScript (final String linkId, final OutputStream stream) throws IOException {
-        stream.write ( ("<script type=\"text/javascript\">$(document).ready(function() {$('#link-" + linkId + "').on('submit', function(e) {e.preventDefault();"
-                + "var $this = $(this);$.ajax({url: $this.attr('action'),type: $this.attr('method'),data: $('#link-" + linkId + "-unknownParameters').length > 0 ? $('#link-"
-                + linkId + "-unknownParameters').val () : $this.serialize(),dataType: \"html\",success: function(html) {"
-                + "    var body = html.substring (html.indexOf ('<body>'));    body = body.substring (0, html.indexOf ('</body>'));"
-                + "    $('body').html ($(body).wrapAll('<div>').parent().html());    $('#goBack').attr ('href', 'javascript:history.go (0)');}});});});</script>").getBytes ());
+        stream.write ( ("<script type=\"text/javascript\">$(document).ready(function() {$('#link-" + linkId
+                + "').on('submit', function(e) {e.preventDefault();var $this = $(this);var renderResult = function(html) {html = html.responseText ? html.responseText : html;    var body = html.substring (html.indexOf ('<body>'));    body = body.substring (0, html.indexOf ('</body>'));    $('body').html ($(body).wrapAll('<div>').parent().html());    $('#goBack').attr ('href', 'javascript:history.go (0)');};$.ajax({url: $this.attr('action'),type: $this.attr('method'),data: $('#link-"
+                + linkId + "-unknownParameters').length > 0 ? $('#link-" + linkId
+                + "-unknownParameters').val () : $this.serialize(),dataType: \"html\",success: renderResult,error: renderResult});});});</script>").getBytes ());
     }
 }
