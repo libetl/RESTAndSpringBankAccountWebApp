@@ -19,8 +19,8 @@ import com.fasterxml.jackson.dataformat.yaml.snakeyaml.DumperOptions;
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.Yaml;
 
 public class YamlMessageConverter implements GenericHttpMessageConverter<Object> {
-    public static final String APPLICATION_YAML = "application/yaml";
-    private static final List<MediaType> YAML_ONLY = Collections.singletonList (MediaType.parseMediaType (YamlMessageConverter.APPLICATION_YAML));;
+    public static final String           APPLICATION_YAML = "application/yaml";
+    private static final List<MediaType> YAML_ONLY        = Collections.singletonList (MediaType.parseMediaType (YamlMessageConverter.APPLICATION_YAML));;
 
     @Override
     public boolean canRead (final Class<?> clazz, final MediaType mediaType) {

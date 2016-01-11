@@ -19,8 +19,8 @@ public class PrimitiveNode implements Node {
         public void serialize (final PrimitiveNode value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException, JsonProcessingException {
             if (value.value instanceof Number) {
                 gen.writeNumber (value.asText ());
-            } else if (value.value instanceof Boolean){
-                gen.writeBoolean ((boolean)value.value);
+            } else if (value.value instanceof Boolean) {
+                gen.writeBoolean ((boolean) value.value);
             } else {
                 gen.writeString (value.asText ());
             }

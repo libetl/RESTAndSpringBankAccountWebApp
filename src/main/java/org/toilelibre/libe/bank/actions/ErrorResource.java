@@ -52,9 +52,9 @@ public class ErrorResource {
     }
 
     @RequestMapping (path = "badRequest")
-    @ExceptionHandler (ServletException.class)
+    @ExceptionHandler ({ IllegalArgumentException.class, ServletException.class })
     @ResponseStatus (code = HttpStatus.BAD_REQUEST)
-    public ObjectNode<Node> badRequest (final ServletException exception) {
+    public ObjectNode<Node> badRequest (final Exception exception) {
         final NodeFactory factory = NodeFactory.instance;
         return factory.objectNode ().put ("ok", 0).put ("name", "BadRequest").put ("description", exception.getMessage ()).put ("kind", Kind.BAD_INPUT.name ());
     }
