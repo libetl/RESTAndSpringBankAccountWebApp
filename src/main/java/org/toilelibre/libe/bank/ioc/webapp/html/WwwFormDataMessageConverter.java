@@ -41,6 +41,12 @@ public class WwwFormDataMessageConverter implements GenericHttpMessageConverter<
 
     }
 
+    private void ensureParamCorrectlyFormed (final String [] fields) {
+        if (fields.length < 2) {
+            throw new IllegalArgumentException (String.format ("Malformed request, expected a form param 'a=b', got '%s'", fields [0]));
+        }
+    }
+
     @Override
     public List<MediaType> getSupportedMediaTypes () {
         return Collections.singletonList (MediaType.APPLICATION_FORM_URLENCODED);
@@ -55,6 +61,7 @@ public class WwwFormDataMessageConverter implements GenericHttpMessageConverter<
         final String [] pairs = body.split ("\\&");
         for (final String pair : pairs) {
             final String [] fields = pair.split ("=");
+            this.ensureParamCorrectlyFormed (fields);
             final String key = URLDecoder.decode (fields [0], "UTF-8");
             final String value = URLDecoder.decode (fields [1], "UTF-8");
 
@@ -77,4 +84,5 @@ public class WwwFormDataMessageConverter implements GenericHttpMessageConverter<
     @Override
     public void write (final Object t, final Type type, final MediaType contentType, final HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
     }
+
 }
