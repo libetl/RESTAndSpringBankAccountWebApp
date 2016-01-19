@@ -21,6 +21,7 @@ public class ServerMain {
         webappContext.setConfigurationClasses (Arrays.asList (WebAppInitializer.class.getName ()));
 
         server.setHandler (webappContext);
-        server.start ();server.join ();
+        server.start ();
+        server.join ();
     }
 }
