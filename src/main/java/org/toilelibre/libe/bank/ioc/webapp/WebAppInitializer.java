@@ -1,5 +1,4 @@
 package org.toilelibre.libe.bank.ioc.webapp;
-package org.toilelibre.libe.bank.ioc.webapp;
 
 import java.util.EnumSet;
 
