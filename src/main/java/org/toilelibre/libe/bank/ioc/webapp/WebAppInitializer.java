@@ -49,3 +49,4 @@ public class WebAppInitializer extends AbstractConfiguration implements WebAppli
         dispatcher.setInitParameter ("throwExceptionIfNoHandlerFound", "true");
         dispatcher.addMapping ("/api/*");
     }
+}
