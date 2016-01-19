@@ -1,4 +1,5 @@
 package org.toilelibre.libe.bank.ioc.webapp;
+package org.toilelibre.libe.bank.ioc.webapp;
 
 import java.util.EnumSet;
 
@@ -13,12 +14,15 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.toilelibre.libe.bank.ioc.logs.LogbackConfigListener;
+import org.eclipse.jetty.webapp.AbstractConfiguration;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * web.xml in Full JavaConfig
  *
  */
-public class WebAppInitializer implements WebApplicationInitializer {
+public class WebAppInitializer extends AbstractConfiguration implements WebApplicationInitializer {
+	
     private AnnotationConfigWebApplicationContext getContext () {
         final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext ();
         context.setConfigLocations (WebAppConfig.class.getName (), WebAppContentNegociationConfig.class.getName (),
@@ -27,6 +31,11 @@ public class WebAppInitializer implements WebApplicationInitializer {
     }
 
     @Override
+	public void configure(WebAppContext context) throws Exception {
+		this.onStartup (context.getServletContext ());
+	}
+
+	@Override
     public void onStartup (final ServletContext servletContext) throws ServletException {
         final WebApplicationContext context = this.getContext ();
         servletContext.addListener (new LogbackConfigListener ());
@@ -41,5 +50,3 @@ public class WebAppInitializer implements WebApplicationInitializer {
         dispatcher.setInitParameter ("throwExceptionIfNoHandlerFound", "true");
         dispatcher.addMapping ("/api/*");
     }
-
-}
