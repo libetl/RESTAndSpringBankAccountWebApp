@@ -53,7 +53,7 @@ public class ErrorResource {
     }
 
     @RequestMapping (path = "badRequest")
-    @ExceptionHandler ({ IllegalArgumentException.class, ServletException.class, HttpMessageNotReadableException.class })
+    @ExceptionHandler ({ IllegalArgumentException.class, IllegalStateException.class, ServletException.class, HttpMessageNotReadableException.class })
     @ResponseStatus (code = HttpStatus.BAD_REQUEST)
     public ObjectNode<Node> badRequest (final Exception exception) {
         final NodeFactory factory = NodeFactory.instance;
