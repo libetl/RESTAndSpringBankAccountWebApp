@@ -1,4 +1,4 @@
-Bank Account Server : mvn + Java 7 + Spring MVC + Spring core + Spring cache + Logback
+Bank Account Server : mvn + Java 8 + Spring MVC + Spring core + Spring cache + Logback
 
 Look for any web.xml file or logback.xml... This is a ZERO config webapp.
 
